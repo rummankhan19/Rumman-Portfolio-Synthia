@@ -50,7 +50,7 @@ const DISTRICTS = [
     color: 'cyan',
     coord: 'GRID: 4471.08',
     tag: 'INDUSTRY',
-    x: 74, y: 30,
+    x: 72, y: 38,
   },
   {
     id: '04',
@@ -62,7 +62,7 @@ const DISTRICTS = [
     color: 'blue',
     coord: 'GRID: 2210.99',
     tag: 'SYSTEMS',
-    x: 78, y: 68,
+    x: 80, y: 66,
   },
   {
     id: '05',
@@ -74,7 +74,7 @@ const DISTRICTS = [
     color: 'purple',
     coord: 'GRID: 3390.55',
     tag: 'LABS',
-    x: 32, y: 30,
+    x: 28, y: 38,
   },
   {
     id: '06',
@@ -86,7 +86,7 @@ const DISTRICTS = [
     color: 'orange',
     coord: 'GRID: 5001.77',
     tag: 'AWARDS',
-    x: 58, y: 22,
+    x: 88, y: 15,
   },
   {
     id: '07',
@@ -923,26 +923,37 @@ function CityView({ onEnter }) {
     >
       <CityBackdrop />
 
-      {/* Central hologram title */}
-      <div className="absolute top-[8%] left-0 right-0 z-30 flex flex-col items-center px-6 text-center pointer-events-none">
+      {/* Central title panel — contained, elegant */}
+      <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center px-6 text-center pointer-events-none w-full max-w-3xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          className="font-mono text-[11px] tracking-[0.4em] text-cyan-400/80"
+          className="font-mono text-[11px] tracking-[0.4em] text-cyan-400/80 mb-2"
         >
           [ N E O — C I T Y // S E C T O R  0 4 5 1 ]
         </motion.div>
         <motion.h2
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-          className="font-display font-black text-3xl sm:text-5xl md:text-6xl neon-text mt-2 glitch"
-          data-text="THE ARCHITECT&apos;S GRID"
+          initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }}
+          className="font-display font-black text-5xl sm:text-6xl md:text-7xl neon-text glitch"
+          data-text="SYNTHIA"
         >
-          THE ARCHITECT&apos;S GRID
+          SYNTHIA
         </motion.h2>
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
-          className="font-body text-cyan-100/70 text-sm sm:text-base mt-2 max-w-2xl"
+          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.9, duration: 0.7 }}
+          className="h-[1px] mt-3 w-40"
+          style={{ background: 'linear-gradient(90deg, transparent, #00f0ff, #b537f2, transparent)' }}
+        />
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
+          className="font-body italic text-fuchsia-200/90 text-base sm:text-lg mt-3 tracking-wide"
         >
-          Navigate the neural districts. Every waypoint decrypts a chapter of the operator&apos;s memory.
+          A Fake Paradise Run By Artificial Minds.
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}
+          className="font-mono text-[10px] text-cyan-300/70 mt-2 tracking-[0.3em] uppercase"
+        >
+          &mdash; Built by Rumman Khan &mdash;
         </motion.div>
       </div>
 

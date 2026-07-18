@@ -1,12 +1,12 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'RUMMAN.OS // Neural Operating System',
-  description: 'Enter the AI operating system of Rumman Khan — AI Business Analyst, Automation Engineer & ML Developer. A cinematic cyberpunk portfolio experience.',
-  keywords: 'Rumman Khan, AI Portfolio, Cyberpunk Portfolio, Machine Learning, Automation Engineer',
+  title: 'SYNTHIA // A Fake Paradise Run By Artificial Minds',
+  description: 'SYNTHIA — a cinematic cyberpunk portfolio experience by Rumman Khan. AI Business Analyst, Automation Engineer & ML Developer.',
+  keywords: 'Synthia, Rumman Khan, AI Portfolio, Cyberpunk Portfolio, Machine Learning, Automation Engineer',
   openGraph: {
-    title: 'RUMMAN.OS',
-    description: 'Enter the neural network of Rumman Khan.',
+    title: 'SYNTHIA — Built by Rumman Khan',
+    description: 'A Fake Paradise Run By Artificial Minds.',
     type: 'website',
   },
 }

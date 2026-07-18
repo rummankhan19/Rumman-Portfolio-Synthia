@@ -376,6 +376,224 @@ function MobileCityView({ onEnter }) {
   )
 }
 
+// ---------------------- AUDIO ENGINE (procedural, no assets needed) ----------------------
+class SynthiaAudio {
+  constructor() {
+    this.ctx = null
+    this.master = null
+    this.musicGain = null
+    this.sfxGain = null
+    this.enabled = false
+    this.musicStarted = false
+    this.arpTimer = null
+  }
+  ensure() {
+    if (!this.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext
+      this.ctx = new AC()
+      this.master = this.ctx.createGain()
+      this.master.gain.value = 0.6
+      this.master.connect(this.ctx.destination)
+      this.musicGain = this.ctx.createGain()
+      this.musicGain.gain.value = 0
+      this.musicGain.connect(this.master)
+      this.sfxGain = this.ctx.createGain()
+      this.sfxGain.gain.value = 0.5
+      this.sfxGain.connect(this.master)
+    }
+    if (this.ctx.state === 'suspended') this.ctx.resume()
+  }
+  enable() {
+    this.ensure()
+    this.enabled = true
+    if (!this.musicStarted) this.startMusic()
+    // fade in music
+    const t = this.ctx.currentTime
+    this.musicGain.gain.cancelScheduledValues(t)
+    this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, t)
+    this.musicGain.gain.linearRampToValueAtTime(0.18, t + 1.5)
+  }
+  disable() {
+    if (!this.ctx) return
+    this.enabled = false
+    const t = this.ctx.currentTime
+    this.musicGain.gain.cancelScheduledValues(t)
+    this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, t)
+    this.musicGain.gain.linearRampToValueAtTime(0, t + 0.8)
+  }
+  startMusic() {
+    if (!this.ctx) return
+    this.musicStarted = true
+    const now = this.ctx.currentTime
+    // Bass drone (two detuned saws through a low-pass)
+    const filt = this.ctx.createBiquadFilter()
+    filt.type = 'lowpass'
+    filt.frequency.value = 700
+    filt.Q.value = 4
+    filt.connect(this.musicGain)
+    const bassFreq = 55 // A1
+    ;[bassFreq, bassFreq * 1.005].forEach((f) => {
+      const o = this.ctx.createOscillator()
+      o.type = 'sawtooth'
+      o.frequency.value = f
+      const g = this.ctx.createGain()
+      g.gain.value = 0.18
+      o.connect(g).connect(filt)
+      o.start(now)
+    })
+    // Pad (two triangles a fifth apart)
+    const padGain = this.ctx.createGain()
+    padGain.gain.value = 0.05
+    padGain.connect(this.musicGain)
+    ;[220, 329.6].forEach((f) => {
+      const o = this.ctx.createOscillator()
+      o.type = 'triangle'
+      o.frequency.value = f
+      o.connect(padGain)
+      o.start(now)
+    })
+    // Filter sweep for movement
+    const lfo = this.ctx.createOscillator()
+    lfo.frequency.value = 0.08
+    const lfoGain = this.ctx.createGain()
+    lfoGain.gain.value = 400
+    lfo.connect(lfoGain).connect(filt.frequency)
+    lfo.start(now)
+    // Arp — plays a soft pattern every 250ms
+    const notes = [440, 554.37, 659.25, 880, 659.25, 554.37]
+    let i = 0
+    this.arpTimer = setInterval(() => {
+      if (!this.ctx || !this.enabled) return
+      const t = this.ctx.currentTime
+      const o = this.ctx.createOscillator()
+      o.type = 'sine'
+      o.frequency.value = notes[i % notes.length]
+      const g = this.ctx.createGain()
+      g.gain.setValueAtTime(0.0001, t)
+      g.gain.exponentialRampToValueAtTime(0.14, t + 0.02)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45)
+      const dly = this.ctx.createDelay()
+      dly.delayTime.value = 0.28
+      const fbk = this.ctx.createGain()
+      fbk.gain.value = 0.35
+      o.connect(g)
+      g.connect(this.musicGain)
+      g.connect(dly)
+      dly.connect(fbk)
+      fbk.connect(dly)
+      dly.connect(this.musicGain)
+      o.start(t)
+      o.stop(t + 0.5)
+      i++
+    }, 320)
+  }
+  // ---------- SFX ----------
+  _noiseBuffer(dur = 0.5) {
+    const rate = this.ctx.sampleRate
+    const b = this.ctx.createBuffer(1, rate * dur, rate)
+    const d = b.getChannelData(0)
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1
+    return b
+  }
+  click() {
+    if (!this.enabled) return
+    this.ensure()
+    const t = this.ctx.currentTime
+    const o = this.ctx.createOscillator()
+    o.type = 'square'
+    o.frequency.setValueAtTime(1200, t)
+    o.frequency.exponentialRampToValueAtTime(600, t + 0.08)
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.exponentialRampToValueAtTime(0.2, t + 0.005)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.1)
+    o.connect(g).connect(this.sfxGain)
+    o.start(t)
+    o.stop(t + 0.12)
+  }
+  beep(freq = 880, dur = 0.06) {
+    if (!this.enabled) return
+    this.ensure()
+    const t = this.ctx.currentTime
+    const o = this.ctx.createOscillator()
+    o.type = 'sine'
+    o.frequency.value = freq
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.exponentialRampToValueAtTime(0.15, t + 0.005)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+    o.connect(g).connect(this.sfxGain)
+    o.start(t)
+    o.stop(t + dur + 0.02)
+  }
+  missileLaunch() {
+    if (!this.enabled) return
+    this.ensure()
+    const t = this.ctx.currentTime
+    // Whoosh: filtered noise sweeping down
+    const src = this.ctx.createBufferSource()
+    src.buffer = this._noiseBuffer(0.9)
+    const filt = this.ctx.createBiquadFilter()
+    filt.type = 'bandpass'
+    filt.Q.value = 3
+    filt.frequency.setValueAtTime(3000, t)
+    filt.frequency.exponentialRampToValueAtTime(600, t + 0.9)
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.linearRampToValueAtTime(0.35, t + 0.15)
+    g.gain.linearRampToValueAtTime(0.0001, t + 0.9)
+    src.connect(filt).connect(g).connect(this.sfxGain)
+    src.start(t)
+    // High whistle
+    const o = this.ctx.createOscillator()
+    o.type = 'sawtooth'
+    o.frequency.setValueAtTime(1400, t)
+    o.frequency.exponentialRampToValueAtTime(500, t + 0.85)
+    const g2 = this.ctx.createGain()
+    g2.gain.setValueAtTime(0.0001, t)
+    g2.gain.linearRampToValueAtTime(0.12, t + 0.1)
+    g2.gain.linearRampToValueAtTime(0.0001, t + 0.85)
+    o.connect(g2).connect(this.sfxGain)
+    o.start(t)
+    o.stop(t + 0.9)
+  }
+  missileImpact() {
+    if (!this.enabled) return
+    this.ensure()
+    const t = this.ctx.currentTime
+    // Boom: low sine drop
+    const o = this.ctx.createOscillator()
+    o.type = 'sine'
+    o.frequency.setValueAtTime(150, t)
+    o.frequency.exponentialRampToValueAtTime(35, t + 0.6)
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.linearRampToValueAtTime(0.6, t + 0.02)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.7)
+    o.connect(g).connect(this.sfxGain)
+    o.start(t)
+    o.stop(t + 0.8)
+    // Noise burst
+    const src = this.ctx.createBufferSource()
+    src.buffer = this._noiseBuffer(0.5)
+    const filt = this.ctx.createBiquadFilter()
+    filt.type = 'lowpass'
+    filt.frequency.value = 800
+    const g2 = this.ctx.createGain()
+    g2.gain.setValueAtTime(0.4, t)
+    g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.35)
+    src.connect(filt).connect(g2).connect(this.sfxGain)
+    src.start(t)
+  }
+}
+
+let AUDIO = null
+function getAudio() {
+  if (typeof window === 'undefined') return null
+  if (!AUDIO) AUDIO = new SynthiaAudio()
+  return AUDIO
+}
+
 // ---------------------- HOOKS ----------------------
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(() => {
@@ -601,23 +819,26 @@ const BOOT_LINES = [
   { t: '>> WELCOME, OPERATOR.', d: 500, hi: true },
 ]
 
-function BootSequence({ onFinish }) {
+function BootSequence({ onFinish, soundEnabled, onEnableSound }) {
   const [visibleLines, setVisibleLines] = useState([])
   const [phase, setPhase] = useState('boot') // boot -> title -> zoom
   const [skip, setSkip] = useState(false)
 
   useEffect(() => {
     let cancelled = false
-    let idx = 0
     const run = async () => {
       for (let i = 0; i < BOOT_LINES.length; i++) {
         if (cancelled) return
         await new Promise(r => setTimeout(r, BOOT_LINES[i].d))
         if (cancelled) return
+        const a = getAudio()
+        if (a && soundEnabled) a.beep(BOOT_LINES[i].hi ? 900 : 700, 0.04)
         setVisibleLines(prev => [...prev, BOOT_LINES[i]])
       }
       await new Promise(r => setTimeout(r, 500))
       if (!cancelled) setPhase('title')
+      const a2 = getAudio()
+      if (a2 && soundEnabled) a2.beep(1400, 0.15)
       await new Promise(r => setTimeout(r, 3200))
       if (!cancelled) setPhase('zoom')
       await new Promise(r => setTimeout(r, 1600))
@@ -625,7 +846,7 @@ function BootSequence({ onFinish }) {
     }
     run()
     return () => { cancelled = true }
-  }, [onFinish])
+  }, [onFinish, soundEnabled])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -649,9 +870,19 @@ function BootSequence({ onFinish }) {
       <div className="absolute inset-0 cyber-grid-sm opacity-30" />
       <div className="absolute inset-0 scanlines" />
 
-      {/* skip hint */}
-      <div className="absolute top-6 right-6 font-mono text-xs text-cyan-400/70 z-50">
-        [ press SPACE to skip ]
+      {/* skip hint + sound prompt */}
+      <div className="absolute top-6 right-6 font-mono text-xs text-cyan-400/70 z-50 flex items-center gap-3">
+        {!soundEnabled && (
+          <button
+            onClick={onEnableSound}
+            className="glass-dark px-3 py-1.5 clip-notch-sm flex items-center gap-2 hover:bg-cyan-500/10 transition pointer-events-auto"
+            style={{ boxShadow: '0 0 12px rgba(0,240,255,0.35)' }}
+          >
+            <Volume2 className="w-3.5 h-3.5 text-cyan-300 blink" />
+            <span className="font-mono text-[10px] text-cyan-200 tracking-wider">ENGAGE AUDIO</span>
+          </button>
+        )}
+        <span>[ press SPACE to skip ]</span>
       </div>
 
       <AnimatePresence mode="wait">
@@ -864,8 +1095,24 @@ function MissileStrike({ target, onImpact, onComplete }) {
 
 // ---------------------- MISSILE STRIKE OVERLAY ---------------------- (end)
 
+// ---------------------- SOUND TOGGLE BUTTON ----------------------
+function SoundToggle({ enabled, onToggle }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="pointer-events-auto glass-dark w-9 h-9 sm:w-10 sm:h-10 clip-notch-sm flex items-center justify-center hover:bg-cyan-500/10 transition"
+      title={enabled ? 'Mute audio' : 'Enable audio'}
+      style={{ boxShadow: enabled ? '0 0 12px rgba(0,240,255,0.4)' : undefined }}
+    >
+      {enabled
+        ? <Volume2 className="w-4 h-4 text-cyan-300" />
+        : <VolumeX className="w-4 h-4 text-cyan-500/60" />}
+    </button>
+  )
+}
+
 // ---------------------- HUD ----------------------
-function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap, isMobile }) {
+function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap, isMobile, soundEnabled, onToggleSound }) {
   return (
     <div className="fixed inset-0 pointer-events-none z-40">
       {/* Top bar */}
@@ -887,6 +1134,7 @@ function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap, isMobile }) 
         </div>
 
         <div className="pointer-events-auto flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <SoundToggle enabled={soundEnabled} onToggle={onToggleSound} />
           <div className="hidden sm:flex glass px-3 py-1.5 clip-notch-sm items-center gap-2">
             <Activity className="w-3.5 h-3.5 text-cyan-300" />
             <span className="font-mono text-[10px] text-cyan-200">CORE 42°C</span>
@@ -1781,14 +2029,14 @@ function DistrictContact() {
 
 // ---------------------- MAIN APP ----------------------
 function App() {
-  const [phase, setPhase] = useState('boot') // boot -> city
+  const [phase, setPhase] = useState('boot')
   const [activeDistrict, setActiveDistrict] = useState(null)
   const [timeStr, setTimeStr] = useState('00:00:00')
   const [missileTarget, setMissileTarget] = useState(null)
   const [mapCollapsed, setMapCollapsed] = useState(false)
+  const [soundEnabled, setSoundEnabled] = useState(false)
   const isMobile = useIsMobile(768)
 
-  // Auto-collapse mini-map on mobile
   useEffect(() => { if (isMobile) setMapCollapsed(true) }, [isMobile])
 
   useEffect(() => {
@@ -1801,29 +2049,61 @@ function App() {
     return () => clearInterval(id)
   }, [])
 
-  const handleFinishBoot = useCallback(() => setPhase('city'), [])
+  const handleToggleSound = useCallback(() => {
+    const a = getAudio()
+    if (!a) return
+    setSoundEnabled((prev) => {
+      const next = !prev
+      if (next) { a.enable(); a.click() } else { a.disable() }
+      return next
+    })
+  }, [])
+
+  const handleFinishBoot = useCallback(() => {
+    const a = getAudio()
+    if (a && soundEnabled) a.beep(1200, 0.08)
+    setPhase('city')
+  }, [soundEnabled])
 
   const fireMissileAt = useCallback((district) => {
     if (!district || missileTarget || activeDistrict) return
+    const a = getAudio()
+    if (a && soundEnabled) a.missileLaunch()
     setMissileTarget(district)
-  }, [missileTarget, activeDistrict])
+  }, [missileTarget, activeDistrict, soundEnabled])
 
   const handleEnter = useCallback((d) => {
+    const a = getAudio()
+    if (a && soundEnabled) a.click()
     if (isMobile) {
-      // Skip missile on mobile — go straight in for a snappier tap feel
       setActiveDistrict(d.key)
     } else {
       fireMissileAt(d)
     }
-  }, [fireMissileAt, isMobile])
+  }, [fireMissileAt, isMobile, soundEnabled])
 
-  const handleExit = useCallback(() => setActiveDistrict(null), [])
-  const handleToggleMap = useCallback(() => setMapCollapsed(v => !v), [])
+  const handleExit = useCallback(() => {
+    const a = getAudio()
+    if (a && soundEnabled) a.beep(500, 0.06)
+    setActiveDistrict(null)
+  }, [soundEnabled])
+
+  const handleToggleMap = useCallback(() => {
+    const a = getAudio()
+    if (a && soundEnabled) a.click()
+    setMapCollapsed(v => !v)
+  }, [soundEnabled])
+
+  const handleMissileImpact = useCallback(() => {
+    const a = getAudio()
+    if (a && soundEnabled) a.missileImpact()
+    if (missileTarget) setActiveDistrict(missileTarget.key)
+  }, [missileTarget, soundEnabled])
 
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape' && activeDistrict) {
-        setActiveDistrict(null)
+        handleExit()
         return
       }
       if (phase !== 'city' || activeDistrict || missileTarget) return
@@ -1838,14 +2118,14 @@ function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [activeDistrict, phase, missileTarget, fireMissileAt])
+  }, [activeDistrict, phase, missileTarget, fireMissileAt, handleExit])
 
   const districtObj = DISTRICTS.find(d => d.key === activeDistrict)
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black">
       <AnimatePresence mode="wait">
-        {phase === 'boot' && <BootSequence key="b" onFinish={handleFinishBoot} />}
+        {phase === 'boot' && <BootSequence key="b" onFinish={handleFinishBoot} soundEnabled={soundEnabled} onEnableSound={handleToggleSound} />}
       </AnimatePresence>
 
       {phase === 'city' && (
@@ -1857,16 +2137,16 @@ function App() {
           )}
 
           <HUD current={activeDistrict} onExit={handleExit} timeStr={timeStr}
-               mapCollapsed={mapCollapsed} onToggleMap={handleToggleMap} isMobile={isMobile} />
+               mapCollapsed={mapCollapsed} onToggleMap={handleToggleMap}
+               isMobile={isMobile}
+               soundEnabled={soundEnabled} onToggleSound={handleToggleSound} />
 
           <AnimatePresence>
             {missileTarget && (
               <MissileStrike
                 key={missileTarget.key}
                 target={missileTarget}
-                onImpact={() => {
-                  setActiveDistrict(missileTarget.key)
-                }}
+                onImpact={handleMissileImpact}
                 onComplete={() => setMissileTarget(null)}
               />
             )}

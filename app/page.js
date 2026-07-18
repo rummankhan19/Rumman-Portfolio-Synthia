@@ -263,6 +263,138 @@ const IDENTITY = {
   bio: 'Product-focused technologist working at the intersection of AI/ML, data analytics and full-stack engineering. I turn ambiguous user and business needs into deployable systems \u2014 KPI dashboards that decision-makers actually watch, ML pipelines that ship past the demo, and web products that scale. Built inside Kotak Mahindra Bank, FireAI, Bluestock Fintech and Reliance Smart Money \u2014 always with a practical, user-first approach.',
 }
 
+// ---------------------- MOBILE CITY VIEW ----------------------
+function MobileCityView({ onEnter }) {
+  return (
+    <motion.div
+      key="mobile-city"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      transition={{ duration: 0.6 }}
+      className="fixed inset-0 z-10 overflow-y-auto"
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0">
+        <CityBackdrop />
+      </div>
+
+      {/* Foreground scrollable content */}
+      <div className="relative z-20 pt-20 pb-32 px-4">
+        {/* Title */}
+        <div className="text-center mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+            className="font-mono text-[9px] tracking-[0.3em] text-cyan-400/80 mb-1"
+          >
+            [ NEO-CITY // SECTOR 0451 ]
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.35 }}
+            className="font-display font-black text-4xl xs:text-5xl neon-text glitch"
+            data-text="SYNTHIA"
+          >
+            SYNTHIA
+          </motion.h2>
+          <motion.div
+            initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.6, duration: 0.6 }}
+            className="h-[1px] mt-2 mx-auto w-28"
+            style={{ background: 'linear-gradient(90deg, transparent, #00f0ff, #b537f2, transparent)' }}
+          />
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}
+            className="font-body italic text-fuchsia-200/90 text-sm mt-2 tracking-wide px-3"
+          >
+            A Fake Paradise Run By Artificial Minds.
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}
+            className="font-mono text-[9px] text-cyan-300/70 mt-2 tracking-[0.25em] uppercase"
+          >
+            &mdash; Built by Rumman Khan &mdash;
+          </motion.div>
+        </div>
+
+        {/* Instructions */}
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+          className="glass-dark px-3 py-2 clip-notch-sm mx-auto w-fit mb-5"
+        >
+          <span className="font-mono text-[9px] text-cyan-300/80 tracking-wider">TAP A DISTRICT TO ENTER</span>
+        </motion.div>
+
+        {/* District cards */}
+        <div className="grid grid-cols-1 gap-3 max-w-md mx-auto">
+          {DISTRICTS.map((d, i) => {
+            const Icon = d.icon
+            const colorMap = {
+              cyan: { text: 'text-cyan-200', ring: 'border-cyan-400/70', bg: 'from-cyan-500/15 to-cyan-500/5', glow: 'rgba(0,240,255,0.35)' },
+              purple: { text: 'text-fuchsia-200', ring: 'border-fuchsia-400/70', bg: 'from-fuchsia-500/15 to-fuchsia-500/5', glow: 'rgba(181,55,242,0.35)' },
+              blue: { text: 'text-blue-200', ring: 'border-blue-400/70', bg: 'from-blue-500/15 to-blue-500/5', glow: 'rgba(0,128,255,0.35)' },
+              orange: { text: 'text-orange-200', ring: 'border-orange-400/70', bg: 'from-orange-500/15 to-orange-500/5', glow: 'rgba(255,138,26,0.35)' },
+            }
+            const c = colorMap[d.color] || colorMap.cyan
+            return (
+              <motion.button
+                key={d.id}
+                onClick={() => onEnter(d)}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.1 + i * 0.07 }}
+                className={`glass-dark clip-notch p-3 flex items-center gap-3 text-left border ${c.ring} active:scale-[0.98] transition relative overflow-hidden`}
+                style={{ boxShadow: `0 0 20px ${c.glow}` }}
+              >
+                {/* Bg accent */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${c.bg} opacity-60 pointer-events-none`} />
+                <div className="absolute top-0 left-0 h-full w-1"
+                  style={{ background: `linear-gradient(180deg, ${c.glow}, transparent)` }} />
+
+                {/* Icon */}
+                <div className={`relative w-12 h-12 clip-hex flex items-center justify-center flex-shrink-0 border-2 ${c.ring}`}
+                  style={{ boxShadow: `0 0 12px ${c.glow}, inset 0 0 12px ${c.glow}` }}
+                >
+                  <Icon className={`w-5 h-5 ${c.text}`} />
+                </div>
+
+                {/* Text */}
+                <div className="flex-1 min-w-0 relative">
+                  <div className={`font-mono text-[9px] ${c.text} opacity-70`}>{d.tag} // {d.id}</div>
+                  <div className={`font-display font-bold text-base ${c.text} truncate`}>{d.name}</div>
+                  <div className="font-body text-[11px] text-cyan-100/60 truncate">{d.subtitle}</div>
+                </div>
+
+                {/* Hotkey badge (decorative on mobile) */}
+                <div className={`hidden xs:flex font-display font-black text-[11px] w-6 h-6 items-center justify-center ${c.text} border ${c.ring} bg-black/60 clip-notch-sm flex-shrink-0`}>
+                  {d.hotkey}
+                </div>
+
+                <ChevronRight className={`w-4 h-4 ${c.text} flex-shrink-0 opacity-70`} />
+              </motion.button>
+            )
+          })}
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+// ---------------------- HOOKS ----------------------
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth < breakpoint
+  })
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < breakpoint)
+    check()
+    window.addEventListener('resize', check)
+    window.addEventListener('orientationchange', check)
+    return () => {
+      window.removeEventListener('resize', check)
+      window.removeEventListener('orientationchange', check)
+    }
+  }, [breakpoint])
+  return isMobile
+}
+
 // ---------------------- SUB-COMPONENTS ----------------------
 
 function RainLayer({ count = 60 }) {
@@ -733,16 +865,16 @@ function MissileStrike({ target, onImpact, onComplete }) {
 // ---------------------- MISSILE STRIKE OVERLAY ---------------------- (end)
 
 // ---------------------- HUD ----------------------
-function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap }) {
+function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap, isMobile }) {
   return (
     <div className="fixed inset-0 pointer-events-none z-40">
       {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between">
-        <div className="pointer-events-auto flex items-center gap-3">
-          <div className="glass px-3 py-1.5 clip-notch-sm flex items-center gap-2">
+      <div className="absolute top-0 left-0 right-0 p-3 sm:p-4 flex items-center justify-between gap-2">
+        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="glass px-2.5 py-1.5 clip-notch-sm flex items-center gap-2 flex-shrink-0">
             <div className="w-2 h-2 rounded-full bg-cyan-400 pulse-neon" />
-            <span className="font-mono text-[11px] tracking-widest text-cyan-200">RUMMAN.OS</span>
-            <span className="font-mono text-[10px] text-cyan-400/70">v2.045.11</span>
+            <span className="font-mono text-[10px] sm:text-[11px] tracking-widest text-cyan-200">SYNTHIA</span>
+            <span className="hidden sm:inline font-mono text-[10px] text-cyan-400/70">v2.045.11</span>
           </div>
           <div className="hidden sm:flex glass px-3 py-1.5 clip-notch-sm items-center gap-2">
             <Wifi className="w-3.5 h-3.5 text-cyan-300" />
@@ -754,32 +886,32 @@ function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap }) {
           </div>
         </div>
 
-        <div className="pointer-events-auto flex items-center gap-3">
+        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <div className="hidden sm:flex glass px-3 py-1.5 clip-notch-sm items-center gap-2">
             <Activity className="w-3.5 h-3.5 text-cyan-300" />
             <span className="font-mono text-[10px] text-cyan-200">CORE 42°C</span>
           </div>
-          <div className="glass px-3 py-1.5 clip-notch-sm">
-            <span className="font-mono text-[11px] text-cyan-200">{timeStr}</span>
+          <div className="glass px-2.5 py-1.5 clip-notch-sm">
+            <span className="font-mono text-[10px] sm:text-[11px] text-cyan-200">{timeStr}</span>
           </div>
         </div>
       </div>
 
       {/* Bottom-left mini map / radar (collapsible) */}
-      <div className="absolute bottom-4 left-4 pointer-events-auto">
+      <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 pointer-events-auto">
         {mapCollapsed ? (
           <button
             onClick={onToggleMap}
-            className="glass-dark w-14 h-14 clip-hex flex items-center justify-center hover:bg-cyan-500/10 transition relative overflow-hidden group"
+            className="glass-dark w-11 h-11 sm:w-14 sm:h-14 clip-hex flex items-center justify-center hover:bg-cyan-500/10 transition relative overflow-hidden group"
             style={{ boxShadow: '0 0 16px rgba(0,240,255,0.35)' }}
             title="Open Mini-Map"
           >
-            <Radar className="w-5 h-5 text-cyan-300 group-hover:rotate-45 transition-transform" />
+            <Radar className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-300 group-hover:rotate-45 transition-transform" />
             <div className="absolute inset-0 radar-sweep opacity-30 pointer-events-none" />
             <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-fuchsia-400 pulse-neon" />
           </button>
         ) : (
-          <div className="glass-dark p-3 clip-notch-sm relative overflow-hidden w-[190px]">
+          <div className="glass-dark p-3 clip-notch-sm relative overflow-hidden w-[170px] sm:w-[190px]">
             <div className="flex items-center justify-between mb-2">
               <span className="font-mono text-[10px] text-cyan-300/80">MINI-MAP</span>
               <button
@@ -790,7 +922,7 @@ function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap }) {
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
-            <div className="relative w-full h-[140px] rounded-sm overflow-hidden border border-cyan-400/30 bg-black/50">
+            <div className="relative w-full h-[120px] sm:h-[140px] rounded-sm overflow-hidden border border-cyan-400/30 bg-black/50">
               <div className="absolute inset-0 cyber-grid-sm opacity-40" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-full h-full radar-sweep opacity-40" />
@@ -813,8 +945,8 @@ function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap }) {
         )}
       </div>
 
-      {/* Bottom-right status */}
-      <div className="absolute bottom-4 right-4 pointer-events-auto flex flex-col gap-2 items-end">
+      {/* Bottom-right status — hidden on mobile to reduce clutter */}
+      <div className="hidden sm:flex absolute bottom-4 right-4 pointer-events-auto flex-col gap-2 items-end">
         <div className="glass-dark px-3 py-2 clip-notch-sm flex items-center gap-2">
           <Zap className="w-3.5 h-3.5 text-cyan-300" />
           <div className="font-mono text-[10px]">
@@ -835,8 +967,8 @@ function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap }) {
         )}
       </div>
 
-      {/* Center crosshair */}
-      {!current && (
+      {/* Center crosshair — desktop only, no active district */}
+      {!current && !isMobile && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="relative w-24 h-24 opacity-40">
             <div className="absolute top-1/2 left-0 w-6 h-[1px] bg-cyan-400" />
@@ -1652,8 +1784,12 @@ function App() {
   const [phase, setPhase] = useState('boot') // boot -> city
   const [activeDistrict, setActiveDistrict] = useState(null)
   const [timeStr, setTimeStr] = useState('00:00:00')
-  const [missileTarget, setMissileTarget] = useState(null) // District object or null
+  const [missileTarget, setMissileTarget] = useState(null)
   const [mapCollapsed, setMapCollapsed] = useState(false)
+  const isMobile = useIsMobile(768)
+
+  // Auto-collapse mini-map on mobile
+  useEffect(() => { if (isMobile) setMapCollapsed(true) }, [isMobile])
 
   useEffect(() => {
     const tick = () => {
@@ -1667,21 +1803,23 @@ function App() {
 
   const handleFinishBoot = useCallback(() => setPhase('city'), [])
 
-  // Fire a missile at a district, then open it after impact
   const fireMissileAt = useCallback((district) => {
     if (!district || missileTarget || activeDistrict) return
     setMissileTarget(district)
   }, [missileTarget, activeDistrict])
 
   const handleEnter = useCallback((d) => {
-    // Waypoint click also triggers missile strike (cinematic entry)
-    fireMissileAt(d)
-  }, [fireMissileAt])
+    if (isMobile) {
+      // Skip missile on mobile — go straight in for a snappier tap feel
+      setActiveDistrict(d.key)
+    } else {
+      fireMissileAt(d)
+    }
+  }, [fireMissileAt, isMobile])
 
   const handleExit = useCallback(() => setActiveDistrict(null), [])
   const handleToggleMap = useCallback(() => setMapCollapsed(v => !v), [])
 
-  // Keyboard: hotkeys for districts + ESC to close
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape' && activeDistrict) {
@@ -1689,7 +1827,6 @@ function App() {
         return
       }
       if (phase !== 'city' || activeDistrict || missileTarget) return
-      // Skip if user is typing in an input
       const t = e.target
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return
       const k = e.key.toUpperCase()
@@ -1713,9 +1850,14 @@ function App() {
 
       {phase === 'city' && (
         <>
-          <CityView onEnter={handleEnter} />
+          {isMobile ? (
+            <MobileCityView onEnter={handleEnter} />
+          ) : (
+            <CityView onEnter={handleEnter} />
+          )}
+
           <HUD current={activeDistrict} onExit={handleExit} timeStr={timeStr}
-               mapCollapsed={mapCollapsed} onToggleMap={handleToggleMap} />
+               mapCollapsed={mapCollapsed} onToggleMap={handleToggleMap} isMobile={isMobile} />
 
           <AnimatePresence>
             {missileTarget && (
@@ -1723,7 +1865,6 @@ function App() {
                 key={missileTarget.key}
                 target={missileTarget}
                 onImpact={() => {
-                  // Small screen shake could go here — we open the district on impact
                   setActiveDistrict(missileTarget.key)
                 }}
                 onComplete={() => setMissileTarget(null)}

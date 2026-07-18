@@ -96,127 +96,154 @@ const DISTRICTS = [
 ]
 
 const SKILLS = [
-  { name: 'Python', level: 95, cat: 'Language' },
-  { name: 'SQL / PostgreSQL', level: 92, cat: 'Data' },
-  { name: 'Machine Learning', level: 90, cat: 'AI' },
-  { name: 'BERT / NLP', level: 85, cat: 'AI' },
-  { name: 'TF-IDF', level: 88, cat: 'AI' },
-  { name: 'Django', level: 82, cat: 'Backend' },
-  { name: 'JavaScript', level: 80, cat: 'Frontend' },
-  { name: 'Power BI', level: 90, cat: 'BI' },
-  { name: 'Tableau', level: 87, cat: 'BI' },
-  { name: 'Automation', level: 93, cat: 'Ops' },
+  { name: 'Python', level: 92, cat: 'Language' },
+  { name: 'SQL / PostgreSQL', level: 90, cat: 'Data' },
+  { name: 'JavaScript', level: 82, cat: 'Language' },
+  { name: 'Django', level: 85, cat: 'Backend' },
+  { name: 'BERT / NLP', level: 88, cat: 'AI' },
+  { name: 'TF-IDF + Logistic Regression', level: 90, cat: 'AI' },
+  { name: 'Boosting / Trees', level: 84, cat: 'AI' },
+  { name: 'Tableau', level: 86, cat: 'BI' },
+  { name: 'Power Automate', level: 89, cat: 'Automation' },
+  { name: 'Copilot Studio', level: 84, cat: 'Automation' },
+  { name: 'Azure AI Foundry', level: 82, cat: 'Cloud AI' },
+  { name: 'RPA Tools', level: 85, cat: 'Automation' },
+  { name: 'REST APIs', level: 87, cat: 'Backend' },
+  { name: 'HTML / CSS / Bootstrap', level: 88, cat: 'Frontend' },
+  { name: 'Figma', level: 78, cat: 'Design' },
+  { name: 'Penetration Testing (Hashcat)', level: 72, cat: 'Security' },
 ]
 
 const CORPORATES = [
   {
-    name: 'FireAI Tower',
-    role: 'AI Business Analyst',
-    period: '2024 — Present',
-    color: '#ff5a1f',
-    accent: 'from-orange-500 to-red-500',
-    story: 'Deployed at the frontline of intelligent automation. Architected AI-driven workflows that translated raw operational data into revenue-shaping insight. Built LLM-augmented pipelines that reduced manual review cycles by 70% while lifting decision accuracy across product tiers.',
-    kpis: [
-      { label: 'Automation Uplift', value: '+70%' },
-      { label: 'Decision Latency', value: '-4.2x' },
-      { label: 'Insight Delivery', value: '11 Products' },
-    ],
-    stack: ['Python', 'LLMs', 'LangChain', 'PostgreSQL', 'FastAPI', 'BERT'],
-  },
-  {
     name: 'Kotak Mahindra Tower',
-    role: 'Business Analyst Intern',
-    period: '2023',
+    role: 'Automation Intern',
+    period: 'Jul 2026 — Aug 2026',
     color: '#00d1ff',
     accent: 'from-cyan-400 to-blue-500',
-    story: 'Embedded inside one of India\u2019s largest financial institutions. Reverse-engineered legacy operational bottlenecks. Built forecasting dashboards that surfaced ₹-scale efficiency wins and became a decision-cockpit for senior leadership.',
+    story: 'Deployed inside one of India\u2019s largest financial institutions to accelerate digital transformation. Architected end-to-end business process automations using Power Automate, Copilot Studio, Azure AI Foundry and RPA tools. Translated messy operational workflows into crisp BRDs, SOPs and process maps, and shipped AI-driven POCs that leadership could actually deploy.',
     kpis: [
-      { label: 'Reports Automated', value: '18' },
-      { label: 'Time Saved / week', value: '32 hrs' },
-      { label: 'Stakeholders Served', value: '9 Depts' },
+      { label: 'Automation POCs', value: 'Multiple' },
+      { label: 'Docs Produced', value: 'BRD · SOP · Maps' },
+      { label: 'Stakeholders', value: 'Biz · RTA · Vendor' },
     ],
-    stack: ['SQL', 'Power BI', 'Excel VBA', 'Tableau', 'Python'],
+    stack: ['Power Automate', 'Copilot Studio', 'Azure AI Foundry', 'RPA', 'Dashboards'],
+  },
+  {
+    name: 'FireAI Tower',
+    role: 'AI Business Analyst Intern',
+    period: 'Feb 2026 — Jun 2026',
+    color: '#ff5a1f',
+    accent: 'from-orange-500 to-red-500',
+    story: 'Turned raw business requirements into decision-grade intelligence. Built KPI dashboards and analyzed datasets across SQL (PostgreSQL), Tally Prime, Excel and Google Sheets \u2014 tightening reporting cycles and lifting the signal-to-noise ratio for stakeholders. AI was the tool, business impact was the target.',
+    kpis: [
+      { label: 'Reporting Speed', value: '↑ Higher' },
+      { label: 'Data Sources', value: '4 Systems' },
+      { label: 'Focus', value: 'KPI · Insight' },
+    ],
+    stack: ['SQL', 'PostgreSQL', 'Tally Prime', 'Excel', 'Google Sheets', 'BI Dashboards'],
   },
   {
     name: 'Bluestock Tower',
-    role: 'Product & Data Analyst',
-    period: '2022',
+    role: 'Software Development Engineer',
+    period: 'Nov 2024 — Dec 2024',
     color: '#b537f2',
     accent: 'from-fuchsia-500 to-purple-600',
-    story: 'Turned market chaos into signal. Designed fintech data models to segment retail investor behavior. Delivered a product intelligence layer that shaped feature roadmap prioritisation and drove 3x engagement on high-value cohorts.',
+    story: 'Shipped a production-grade IPO web application at fintech-startup velocity. Django backend, REST APIs, PostgreSQL data layer, responsive frontend, and downloadable RHP/DRHP prospectus PDFs \u2014 delivered as a single coherent product that improved data retrieval efficiency by 20%.',
     kpis: [
-      { label: 'User Cohorts', value: '24' },
-      { label: 'Engagement Lift', value: '+312%' },
-      { label: 'Retention', value: '+41%' },
+      { label: 'Data Retrieval', value: '+20%' },
+      { label: 'Stack Layers', value: 'Full-Stack' },
+      { label: 'Docs Enabled', value: 'RHP · DRHP' },
     ],
-    stack: ['Python', 'ML', 'A/B Testing', 'Recharts', 'SQL'],
+    stack: ['Django', 'REST APIs', 'PostgreSQL', 'JavaScript', 'HTML/CSS', 'Bootstrap'],
+  },
+  {
+    name: 'Reliance Smart Money Tower',
+    role: 'Software Tester Intern',
+    period: 'Aug 2022 — Nov 2022',
+    color: '#00f0ff',
+    accent: 'from-cyan-300 to-teal-500',
+    story: 'Cut teeth on production reliability. Ran deep software testing cycles, isolated critical bugs, and partnered with developers to harden the platform \u2014 an early lesson in the discipline of shipping stable, user-trusted products.',
+    kpis: [
+      { label: 'Bugs Isolated', value: 'Critical' },
+      { label: 'Dev Cycles', value: 'Iterative' },
+      { label: 'Domain', value: 'FinTech' },
+    ],
+    stack: ['Manual QA', 'Test Cases', 'Bug Triage', 'Collaboration'],
   },
 ]
 
 const RESEARCH = [
   {
     icon: Brain,
-    title: 'Emotion Detection Engine',
-    tag: 'NLP // BERT',
+    title: 'Emotion Detection from Movie Reviews',
+    tag: 'NLP // BERT // Aug \u2013 Nov 2025',
     color: 'from-fuchsia-500 to-cyan-400',
-    story: 'A neural pipeline that reads between the lines of thousands of movie reviews. Fine-tuned transformer models detect nuance \u2014 joy, tension, betrayal \u2014 with 91% accuracy. Used as a benchmark for downstream sentiment products.',
-    demo: 'INPUT > "the ending shattered me in the best way" \u2192 EMOTION > catharsis (0.94)',
+    story: 'Built an end-to-end NLP emotion detection pipeline on movie reviews. Benchmarked classical vs. deep learning: TF-IDF + Logistic Regression achieved 88% accuracy, while a fine-tuned BERT model pushed it to 92%. Delivered as a research-grade classifier with a clean evaluation harness.',
+    demo: 'INPUT > "the ending shattered me in the best way"  \u2192  EMOTION > joy · nostalgia  (BERT 0.92)',
   },
   {
     icon: Flame,
-    title: 'Wildfire Prediction System',
-    tag: 'GEOSPATIAL // ML',
+    title: 'Wildfire Prediction Model',
+    tag: 'GEOSPATIAL // ML // Jul \u2013 Nov 2024',
     color: 'from-orange-500 to-red-600',
-    story: 'Fused satellite imagery, humidity, wind vectors, and vegetation indices into a spatial ML model. Predicts ignition zones 72 hours ahead across kilometre-scale grids. Built as a public safety early-warning prototype.',
-    demo: 'REGION > CA-North \u2192 IGNITION RISK > 0.87 // HORIZON 72h',
+    story: 'Fused historical fire records with satellite data and climate factors into an ML pipeline using Boosting and Tree ensembles. Shipped a map-based dashboard with automated alerts for high-risk zones \u2014 built for public-safety early warning.',
+    demo: 'REGION > sector 07  \u2192  RISK CLASS > HIGH  \u2192  DASHBOARD > map + auto-alert',
   },
   {
     icon: Wallet,
-    title: 'Vaultwise \u2014 Fintech Cockpit',
-    tag: 'PRODUCT // FULL-STACK',
+    title: 'Vaultwise \u2014 Budget Management Platform',
+    tag: 'FINTECH // FULL-STACK // Jul \u2013 Nov 2024',
     color: 'from-cyan-400 to-blue-600',
-    story: 'A personal-finance operating layer. Real-time cash flow modelling, anomaly detection on spend patterns, and goal simulation. Built as a founder-mode product: from user interviews to live deployment.',
-    demo: 'CASHFLOW > +₹42,180 / 30d // ANOMALIES DETECTED > 3',
+    story: 'A financial planning tool with real-time spending analysis, investment simulation and embedded educational resources. Recognised with a 3rd place win at a Design Thinking Competition \u2014 shipped user-first, business-aware, and technically clean.',
+    demo: 'MODULE > cashflow  ·  simulator  ·  learn   //   AWARD > \ud83e\udd49 3rd @ Design Thinking Comp.',
   },
   {
     icon: BookOpenCheck,
-    title: 'RegradED \u2014 Education OS',
-    tag: 'EDTECH // FULL-STACK',
+    title: 'RegradED \u2014 Personalized Learning',
+    tag: 'EDTECH // PRODUCT // Jan \u2013 May 2024',
     color: 'from-purple-500 to-fuchsia-500',
-    story: 'An adaptive learning pathway generator. Ingests student performance signals and reshapes course sequencing in real-time. Reduced average time-to-mastery by 28% in early cohorts.',
-    demo: 'LEARNER > alpha_224 \u2192 PATH REROUTED > Module 07 \u2192 Concept Bridge',
+    story: 'Founded and led a personalized-learning venture from scratch. Owned platform development, market research, GTM strategy and brand visibility. Turned an idea into a live, positioned product \u2014 the founder-mode reps that make every future product better.',
+    demo: 'ROLE > product · strategy · brand   //   OUTCOME > platform shipped + positioning secured',
   },
 ]
 
 const ACHIEVEMENTS = [
-  { title: 'Goldman Sachs', sub: 'Engineering Excellence Program', tag: 'FINANCE' },
-  { title: 'AI Bootcamp', sub: 'Intensive Machine Learning Fellowship', tag: 'AI' },
-  { title: 'Web Development', sub: 'Full-Stack Certification', tag: 'DEV' },
-  { title: 'Leadership', sub: 'Cross-functional team leadership', tag: 'PEOPLE' },
-  { title: 'Competitions', sub: 'National-level hackathons & data challenges', tag: 'HACK' },
-  { title: 'Community Work', sub: 'Mentorship & open-source contributions', tag: 'IMPACT' },
+  { title: 'Goldman Sachs · Governance Analyst', sub: 'Simulation Program via Forage \u2014 governance & risk decision framework', tag: 'FINANCE' },
+  { title: 'AI/ML Bootcamp', sub: 'IIM Bangalore \u2014 intensive fellowship in applied machine learning', tag: 'AI' },
+  { title: 'Web Development Bootcamp', sub: 'IIT Bombay \u2014 full-stack development certification', tag: 'DEV' },
+  { title: 'Head of Operations', sub: 'Startup Investor Conclave \u2014 led cross-functional ops team end-to-end', tag: 'LEADERSHIP' },
+  { title: '3rd Place \u2014 Design Thinking Competition', sub: 'Awarded for Vaultwise: financial planning + investment simulation platform', tag: 'HACK' },
+  { title: 'Pagmark Foundation', sub: 'Community work in wildlife conservation \u2014 tech + storytelling for impact', tag: 'IMPACT' },
 ]
 
 const EDUCATION = [
   {
-    year: '2020 — 2024',
-    school: 'Institute of Applied Computation',
-    degree: 'B.Tech, Computer Science & Engineering',
-    focus: 'AI • Data Systems • Product Engineering',
-    note: 'Graduated with distinction. Published a research paper on transformer-based sentiment engines.',
+    year: 'Aug 2022 — May 2026',
+    school: 'Mukesh Patel School of Technology Management & Engineering',
+    degree: 'B.Tech, Computer Science & Business Studies',
+    focus: 'Mumbai, India • GPA 2.95 / 4.0',
+    note: 'A hybrid degree engineered for the intersection of code and commerce \u2014 building the exact multi-lingual skillset that AI product roles now demand.',
   },
   {
-    year: 'ONGOING',
-    school: 'Neural Continuous Learning',
-    degree: 'Self-Directed AI Research',
-    focus: 'LLM Ops • Multi-Agent Systems • RAG Architectures',
-    note: 'Actively shipping side projects at the frontier of applied intelligence.',
+    year: 'May 2021 — May 2022',
+    school: 'Modern Senior Secondary School',
+    degree: '12th Grade (Higher Secondary)',
+    focus: 'Kota, India',
+    note: 'Foundation in mathematics and computing that seeded everything after.',
+  },
+  {
+    year: 'Jun 2019 — Jun 2020',
+    school: 'Modern Senior Secondary School',
+    degree: '10th Grade (Secondary)',
+    focus: 'Kota, India',
+    note: 'First formal contact with computer science \u2014 the point where the trajectory locked in.',
   },
 ]
 
 const IDENTITY = {
   name: 'RUMMAN KHAN',
-  callsign: 'OPERATOR // RK-01',
+  callsign: 'OPERATOR // RK-01 · MUMBAI, INDIA',
   status: 'ONLINE',
   titles: [
     'AI Business Analyst',
@@ -226,7 +253,7 @@ const IDENTITY = {
     'AI Enthusiast',
     'Business + Technology Problem Solver',
   ],
-  bio: 'A builder at the intersection of intelligence and impact. I engineer systems where machine learning stops being a demo and starts being a decision. I translate ambiguous business problems into deployable AI, and I ship products that people actually use \u2014 dashboards that get watched, models that get trusted, automations that outlast the meeting they were built in.',
+  bio: 'Product-focused technologist working at the intersection of AI/ML, data analytics and full-stack engineering. I turn ambiguous user and business needs into deployable systems \u2014 KPI dashboards that decision-makers actually watch, ML pipelines that ship past the demo, and web products that scale. Built inside Kotak Mahindra Bank, FireAI, Bluestock Fintech and Reliance Smart Money \u2014 always with a practical, user-first approach.',
 }
 
 // ---------------------- SUB-COMPONENTS ----------------------
@@ -948,9 +975,9 @@ function DistrictIdentity() {
         {/* Vitals */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { l: 'PROJECTS', v: '20+' },
-            { l: 'YEARS ACTIVE', v: '4' },
-            { l: 'DOMAINS', v: '6' },
+            { l: 'INTERNSHIPS', v: '4' },
+            { l: 'FLAGSHIP PROJECTS', v: '4' },
+            { l: 'CERTIFICATIONS', v: '3' },
           ].map((x) => (
             <div key={x.l} className="glass clip-notch-sm p-3 text-center">
               <div className="font-display text-2xl font-black neon-text">{x.v}</div>
@@ -1368,11 +1395,12 @@ function DistrictAchievements() {
 // ---------------------- DISTRICT: MISSION CONTROL (CONTACT) ----------------------
 function DistrictContact() {
   const links = [
-    { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/rummankhan/', color: '#0077b5', tag: 'PROFESSIONAL' },
-    { icon: Github, label: 'GitHub', href: 'https://github.com/rummankhan', color: '#8a2be2', tag: 'CODE' },
-    { icon: Mail, label: 'Direct Uplink', href: 'mailto:hello@rumman.dev', color: '#00f0ff', tag: 'MESSAGE' },
-    { icon: Calendar, label: 'Schedule Meeting', href: 'https://calendly.com/rumman', color: '#ff2bd6', tag: 'BRIEFING' },
-    { icon: Download, label: 'Download Resume', href: '/resume.pdf', color: '#ff8a1a', tag: 'DOSSIER' },
+    { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/rumman-khan-a8842324b', color: '#0077b5', tag: 'PROFESSIONAL', sub: 'rumman-khan-a8842324b' },
+    { icon: Github, label: 'GitHub', href: 'https://github.com/rummankhan19', color: '#b537f2', tag: 'CODE', sub: 'github.com/rummankhan19' },
+    { icon: Mail, label: 'Direct Uplink', href: 'mailto:rumman1904@gmail.com?subject=Uplink%20from%20RUMMAN.OS', color: '#00f0ff', tag: 'MESSAGE', sub: 'rumman1904@gmail.com' },
+    { icon: Calendar, label: 'Schedule Meeting', href: 'mailto:rumman1904@gmail.com?subject=Meeting%20Request&body=Hi%20Rumman%2C%20I%27d%20like%20to%20schedule%20a%20meeting.', color: '#ff2bd6', tag: 'BRIEFING', sub: 'Email to book a slot' },
+    { icon: Radio, label: 'Direct Line', href: 'tel:+917300028608', color: '#39ff88', tag: 'VOICE-CH', sub: '+91 7300028608' },
+    { icon: Download, label: 'Download Resume', href: '/resume.pdf', color: '#ff8a1a', tag: 'DOSSIER', sub: 'RUMMANCV.pdf' },
   ]
 
   return (
@@ -1391,11 +1419,15 @@ function DistrictContact() {
           <div className="mt-6 grid sm:grid-cols-2 gap-3">
             {links.map((l, i) => {
               const Icon = l.icon
+              const isDownload = l.href.endsWith('.pdf')
+              const isExternal = l.href.startsWith('http')
               return (
                 <motion.a
                   key={l.label}
                   href={l.href}
-                  target="_blank" rel="noopener noreferrer"
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                  download={isDownload ? 'Rumman_Khan_Resume.pdf' : undefined}
                   initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
                   className="glass px-4 py-3 clip-notch flex items-center gap-3 group hover:bg-cyan-500/10 transition"
@@ -1405,9 +1437,10 @@ function DistrictContact() {
                     style={{ background: `${l.color}22`, boxShadow: `0 0 12px ${l.color}55`, border: `1px solid ${l.color}` }}>
                     <Icon className="w-4 h-4" style={{ color: l.color }} />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="font-mono text-[9px] text-cyan-400/70">{l.tag}</div>
-                    <div className="font-display font-bold text-sm text-cyan-100">{l.label}</div>
+                    <div className="font-display font-bold text-sm text-cyan-100 leading-tight">{l.label}</div>
+                    {l.sub && <div className="font-mono text-[10px] text-cyan-300/60 truncate">{l.sub}</div>}
                   </div>
                   <ChevronRight className="w-4 h-4 text-cyan-300 group-hover:translate-x-1 transition" />
                 </motion.a>

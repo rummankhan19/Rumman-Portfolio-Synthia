@@ -19,6 +19,7 @@ const DISTRICTS = [
   {
     id: '01',
     key: 'identity',
+    hotkey: 'I',
     name: 'Identity Core',
     subtitle: 'Central Neural Nexus',
     icon: Cpu,
@@ -30,6 +31,7 @@ const DISTRICTS = [
   {
     id: '02',
     key: 'education',
+    hotkey: 'E',
     name: 'Education Nexus',
     subtitle: 'Academy Sector',
     icon: GraduationCap,
@@ -41,6 +43,7 @@ const DISTRICTS = [
   {
     id: '03',
     key: 'corporate',
+    hotkey: 'C',
     name: 'Corporate Sector',
     subtitle: 'Skyscraper Row',
     icon: Building2,
@@ -52,6 +55,7 @@ const DISTRICTS = [
   {
     id: '04',
     key: 'data',
+    hotkey: 'D',
     name: 'The Data Center',
     subtitle: 'Neural Substrate',
     icon: Database,
@@ -63,6 +67,7 @@ const DISTRICTS = [
   {
     id: '05',
     key: 'research',
+    hotkey: 'R',
     name: 'Research Lab',
     subtitle: 'Deep Learning Facility',
     icon: FlaskConical,
@@ -74,6 +79,7 @@ const DISTRICTS = [
   {
     id: '06',
     key: 'achievements',
+    hotkey: 'A',
     name: 'Achievement Tower',
     subtitle: 'Legacy Archive',
     icon: Trophy,
@@ -85,6 +91,7 @@ const DISTRICTS = [
   {
     id: '07',
     key: 'contact',
+    hotkey: 'M',
     name: 'Mission Control',
     subtitle: 'Uplink Terminal',
     icon: Radio,
@@ -609,8 +616,124 @@ function BootSequence({ onFinish }) {
   )
 }
 
+// ---------------------- MISSILE STRIKE OVERLAY ----------------------
+function MissileStrike({ target, onImpact, onComplete }) {
+  // Missile launches from bottom-right off-screen and arcs to target (x%, y%)
+  const startX = 100 // vw
+  const startY = 105 // vh
+  const endX = target.x
+  const endY = target.y
+
+  // control point (arc apex) roughly midway, higher on screen
+  const midX = (startX + endX) / 2 + 8
+  const midY = Math.min(startY, endY) - 40
+
+  // Compute rotation heuristic based on segment direction (start->end)
+  const dx = endX - startX
+  const dy = endY - startY
+  const angleFinal = Math.atan2(dy, dx) * 180 / Math.PI
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[60]">
+      {/* MISSILE */}
+      <motion.div
+        initial={{ left: `${startX}vw`, top: `${startY}vh`, opacity: 0 }}
+        animate={{
+          left: [`${startX}vw`, `${midX}vw`, `${endX}%`],
+          top: [`${startY}vh`, `${midY}vh`, `${endY}%`],
+          opacity: [0, 1, 1],
+          rotate: [angleFinal - 30, angleFinal - 10, angleFinal],
+        }}
+        transition={{ duration: 0.9, ease: [0.4, 0, 0.6, 1], times: [0, 0.4, 1] }}
+        onAnimationComplete={onImpact}
+        className="absolute -translate-x-1/2 -translate-y-1/2"
+        style={{ willChange: 'transform, left, top' }}
+      >
+        {/* trail */}
+        <div className="absolute right-full top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
+          <div className="h-[2px] w-32 rounded-full"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,138,26,0.7), rgba(255,43,214,0.9))' }} />
+          <div className="h-[6px] w-16 -ml-8 rounded-full blur-md"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,138,26,0.8), rgba(255,43,214,0.7))' }} />
+        </div>
+        {/* body */}
+        <div className="relative flex items-center">
+          <div className="w-8 h-1.5 rounded-sm"
+            style={{ background: 'linear-gradient(90deg, #ff2bd6, #00f0ff)', boxShadow: '0 0 12px #00f0ff, 0 0 24px #ff2bd6' }} />
+          <div className="w-2 h-2 -ml-1 rounded-full"
+            style={{ background: '#fff', boxShadow: '0 0 12px #fff, 0 0 24px #00f0ff' }} />
+        </div>
+      </motion.div>
+
+      {/* IMPACT / EXPLOSION at target */}
+      <motion.div
+        className="absolute -translate-x-1/2 -translate-y-1/2"
+        style={{ left: `${endX}%`, top: `${endY}%` }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 0, 1, 1, 0] }}
+        transition={{ duration: 1.6, times: [0, 0.55, 0.6, 0.85, 1] }}
+        onAnimationComplete={onComplete}
+      >
+        {/* Shockwave rings */}
+        {[0, 0.08, 0.16].map((delay, i) => (
+          <motion.div
+            key={i}
+            initial={{ scale: 0, opacity: 0.9 }}
+            animate={{ scale: [0, 6], opacity: [0.9, 0] }}
+            transition={{ duration: 0.9, delay: 0.55 + delay, ease: 'easeOut' }}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2"
+            style={{ borderColor: i === 0 ? '#ffb84a' : (i === 1 ? '#ff2bd6' : '#00f0ff'), boxShadow: '0 0 30px currentColor' }}
+          />
+        ))}
+        {/* Core blast */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: [0, 3.5, 0] }}
+          transition={{ duration: 0.9, delay: 0.55, ease: 'easeOut' }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full"
+          style={{
+            background: 'radial-gradient(circle, #fff 0%, #ffb84a 20%, #ff2bd6 45%, transparent 75%)',
+            filter: 'blur(2px)',
+            mixBlendMode: 'screen',
+          }}
+        />
+        {/* Sparks */}
+        {Array.from({ length: 14 }).map((_, i) => {
+          const angle = (i / 14) * Math.PI * 2
+          const dist = 120 + (i % 3) * 40
+          return (
+            <motion.div
+              key={`s${i}`}
+              initial={{ x: 0, y: 0, opacity: 1 }}
+              animate={{
+                x: Math.cos(angle) * dist,
+                y: Math.sin(angle) * dist,
+                opacity: [1, 1, 0],
+                scale: [1, 0.3],
+              }}
+              transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
+              className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full"
+              style={{ background: i % 2 === 0 ? '#00f0ff' : '#ff8a1a', boxShadow: '0 0 8px currentColor' }}
+            />
+          )
+        })}
+        {/* Screen flash */}
+        <motion.div
+          className="fixed inset-0 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.35, 0] }}
+          transition={{ duration: 0.35, delay: 0.55 }}
+          style={{ background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.4), transparent 60%)' }}
+        />
+      </motion.div>
+    </div>
+  )
+}
+
+// ---------------------- MISSILE STRIKE OVERLAY ---------------------- (end)
+
 // ---------------------- HUD ----------------------
-function HUD({ current, onExit, timeStr }) {
+function HUD({ current, onExit, timeStr, mapCollapsed, onToggleMap }) {
   return (
     <div className="fixed inset-0 pointer-events-none z-40">
       {/* Top bar */}
@@ -642,33 +765,52 @@ function HUD({ current, onExit, timeStr }) {
         </div>
       </div>
 
-      {/* Bottom-left mini map / radar */}
+      {/* Bottom-left mini map / radar (collapsible) */}
       <div className="absolute bottom-4 left-4 pointer-events-auto">
-        <div className="glass-dark p-3 clip-notch-sm relative overflow-hidden w-[190px]">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-mono text-[10px] text-cyan-300/80">MINI-MAP</span>
-            <Radar className="w-3.5 h-3.5 text-cyan-300" />
-          </div>
-          <div className="relative w-full h-[140px] rounded-sm overflow-hidden border border-cyan-400/30 bg-black/50">
-            <div className="absolute inset-0 cyber-grid-sm opacity-40" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-full h-full radar-sweep opacity-40" />
+        {mapCollapsed ? (
+          <button
+            onClick={onToggleMap}
+            className="glass-dark w-14 h-14 clip-hex flex items-center justify-center hover:bg-cyan-500/10 transition relative overflow-hidden group"
+            style={{ boxShadow: '0 0 16px rgba(0,240,255,0.35)' }}
+            title="Open Mini-Map"
+          >
+            <Radar className="w-5 h-5 text-cyan-300 group-hover:rotate-45 transition-transform" />
+            <div className="absolute inset-0 radar-sweep opacity-30 pointer-events-none" />
+            <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-fuchsia-400 pulse-neon" />
+          </button>
+        ) : (
+          <div className="glass-dark p-3 clip-notch-sm relative overflow-hidden w-[190px]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-mono text-[10px] text-cyan-300/80">MINI-MAP</span>
+              <button
+                onClick={onToggleMap}
+                className="text-cyan-300/80 hover:text-fuchsia-300 transition"
+                title="Collapse Mini-Map"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
-            {DISTRICTS.map(d => (
-              <div key={d.id}
-                className={`absolute w-2 h-2 rounded-full ${current === d.key ? 'bg-fuchsia-400' : 'bg-cyan-400'}`}
-                style={{
-                  left: `${d.x}%`, top: `${d.y}%`,
-                  boxShadow: `0 0 6px ${current === d.key ? '#ff2bd6' : '#00f0ff'}`,
-                  transform: 'translate(-50%, -50%)',
-                }}
-              />
-            ))}
+            <div className="relative w-full h-[140px] rounded-sm overflow-hidden border border-cyan-400/30 bg-black/50">
+              <div className="absolute inset-0 cyber-grid-sm opacity-40" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-full h-full radar-sweep opacity-40" />
+              </div>
+              {DISTRICTS.map(d => (
+                <div key={d.id}
+                  className={`absolute w-2 h-2 rounded-full ${current === d.key ? 'bg-fuchsia-400' : 'bg-cyan-400'}`}
+                  style={{
+                    left: `${d.x}%`, top: `${d.y}%`,
+                    boxShadow: `0 0 6px ${current === d.key ? '#ff2bd6' : '#00f0ff'}`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                />
+              ))}
+            </div>
+            <div className="mt-2 font-mono text-[9px] text-cyan-400/60">
+              {current ? `LOCATED: ${DISTRICTS.find(d => d.key === current)?.name}` : 'ROAMING // CITY GRID'}
+            </div>
           </div>
-          <div className="mt-2 font-mono text-[9px] text-cyan-400/60">
-            {current ? `LOCATED: ${DISTRICTS.find(d => d.key === current)?.name}` : 'ROAMING // CITY GRID'}
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Bottom-right status */}
@@ -756,6 +898,13 @@ function DistrictWaypoint({ district, onSelect, index }) {
           <div className={`font-mono text-[9px] ${c.text}/80`}>{district.tag} // {district.id}</div>
           <div className={`font-display text-[11px] font-bold ${c.text} tracking-wider`}>{district.name}</div>
         </div>
+        {/* KEYCAP */}
+        <div className="mt-1.5 flex items-center justify-center gap-1.5">
+          <span className="font-mono text-[8px] text-cyan-400/60 tracking-widest">PRESS</span>
+          <span className={`font-display font-black text-[11px] w-6 h-6 flex items-center justify-center ${c.text} border ${c.ring} bg-black/60 clip-notch-sm shadow-[0_0_10px_rgba(0,240,255,0.5)]`}>
+            {district.hotkey}
+          </span>
+        </div>
       </div>
     </motion.button>
   )
@@ -808,11 +957,13 @@ function CityView({ onEnter }) {
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}
-          className="glass-dark px-5 py-2.5 clip-notch flex items-center gap-4"
+          className="glass-dark px-5 py-2.5 clip-notch flex items-center gap-4 flex-wrap justify-center"
         >
-          <span className="font-mono text-[10px] text-cyan-300/80">CLICK A HOLO-WAYPOINT TO ENTER</span>
+          <span className="font-mono text-[10px] text-cyan-300/80">CLICK A HOLO-WAYPOINT</span>
           <span className="w-[1px] h-4 bg-cyan-400/40" />
-          <span className="font-mono text-[10px] text-fuchsia-300/80">ESC TO EXIT DISTRICT</span>
+          <span className="font-mono text-[10px] text-fuchsia-300/80">OR PRESS <span className="text-fuchsia-200 font-bold">I · E · C · D · R · A · M</span> TO LAUNCH STRIKE</span>
+          <span className="w-[1px] h-4 bg-cyan-400/40" />
+          <span className="font-mono text-[10px] text-cyan-300/60">ESC TO EXIT</span>
         </motion.div>
       </div>
     </motion.div>
@@ -1490,6 +1641,8 @@ function App() {
   const [phase, setPhase] = useState('boot') // boot -> city
   const [activeDistrict, setActiveDistrict] = useState(null)
   const [timeStr, setTimeStr] = useState('00:00:00')
+  const [missileTarget, setMissileTarget] = useState(null) // District object or null
+  const [mapCollapsed, setMapCollapsed] = useState(false)
 
   useEffect(() => {
     const tick = () => {
@@ -1502,16 +1655,42 @@ function App() {
   }, [])
 
   const handleFinishBoot = useCallback(() => setPhase('city'), [])
-  const handleEnter = useCallback((d) => setActiveDistrict(d.key), [])
-  const handleExit = useCallback(() => setActiveDistrict(null), [])
 
+  // Fire a missile at a district, then open it after impact
+  const fireMissileAt = useCallback((district) => {
+    if (!district || missileTarget || activeDistrict) return
+    setMissileTarget(district)
+  }, [missileTarget, activeDistrict])
+
+  const handleEnter = useCallback((d) => {
+    // Waypoint click also triggers missile strike (cinematic entry)
+    fireMissileAt(d)
+  }, [fireMissileAt])
+
+  const handleExit = useCallback(() => setActiveDistrict(null), [])
+  const handleToggleMap = useCallback(() => setMapCollapsed(v => !v), [])
+
+  // Keyboard: hotkeys for districts + ESC to close
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === 'Escape' && activeDistrict) setActiveDistrict(null)
+      if (e.key === 'Escape' && activeDistrict) {
+        setActiveDistrict(null)
+        return
+      }
+      if (phase !== 'city' || activeDistrict || missileTarget) return
+      // Skip if user is typing in an input
+      const t = e.target
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return
+      const k = e.key.toUpperCase()
+      const d = DISTRICTS.find(x => x.hotkey === k)
+      if (d) {
+        e.preventDefault()
+        fireMissileAt(d)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [activeDistrict])
+  }, [activeDistrict, phase, missileTarget, fireMissileAt])
 
   const districtObj = DISTRICTS.find(d => d.key === activeDistrict)
 
@@ -1524,7 +1703,22 @@ function App() {
       {phase === 'city' && (
         <>
           <CityView onEnter={handleEnter} />
-          <HUD current={activeDistrict} onExit={handleExit} timeStr={timeStr} />
+          <HUD current={activeDistrict} onExit={handleExit} timeStr={timeStr}
+               mapCollapsed={mapCollapsed} onToggleMap={handleToggleMap} />
+
+          <AnimatePresence>
+            {missileTarget && (
+              <MissileStrike
+                key={missileTarget.key}
+                target={missileTarget}
+                onImpact={() => {
+                  // Small screen shake could go here — we open the district on impact
+                  setActiveDistrict(missileTarget.key)
+                }}
+                onComplete={() => setMissileTarget(null)}
+              />
+            )}
+          </AnimatePresence>
 
           <AnimatePresence mode="wait">
             {districtObj && (

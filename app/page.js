@@ -98,7 +98,7 @@ const DISTRICTS = [
     color: 'cyan',
     coord: 'GRID: 9999.00',
     tag: 'CONTACT',
-    x: 50, y: 78,
+    x: 50, y: 70,
   },
 ]
 
@@ -964,17 +964,17 @@ function CityView({ onEnter }) {
         ))}
       </div>
 
-      {/* Bottom controls */}
-      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+      {/* Bottom controls — compact hint bar */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none w-full max-w-3xl px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}
-          className="glass-dark px-5 py-2.5 clip-notch flex items-center gap-4 flex-wrap justify-center"
+          className="glass-dark px-4 py-2 clip-notch flex items-center gap-3 flex-wrap justify-center mx-auto w-fit"
         >
-          <span className="font-mono text-[10px] text-cyan-300/80">CLICK A HOLO-WAYPOINT</span>
-          <span className="w-[1px] h-4 bg-cyan-400/40" />
-          <span className="font-mono text-[10px] text-fuchsia-300/80">OR PRESS <span className="text-fuchsia-200 font-bold">I · E · C · D · R · A · M</span> TO LAUNCH STRIKE</span>
-          <span className="w-[1px] h-4 bg-cyan-400/40" />
-          <span className="font-mono text-[10px] text-cyan-300/60">ESC TO EXIT</span>
+          <span className="font-mono text-[9px] text-cyan-300/80">CLICK WAYPOINT</span>
+          <span className="w-[1px] h-3 bg-cyan-400/40" />
+          <span className="font-mono text-[9px] text-fuchsia-300/80">PRESS <span className="text-fuchsia-200 font-bold">I · E · C · D · R · A · M</span> TO STRIKE</span>
+          <span className="w-[1px] h-3 bg-cyan-400/40" />
+          <span className="font-mono text-[9px] text-cyan-300/60">ESC EXIT</span>
         </motion.div>
       </div>
     </motion.div>

@@ -1,0 +1,1515 @@
+'use client'
+
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Cpu, Database, Building2, GraduationCap, FlaskConical, Trophy, Radio,
+  Terminal, Download, Github, Linkedin, Mail, Calendar, ArrowLeft,
+  Wifi, Radar, Zap, Shield, Activity, ChevronRight, X, Play,
+  Brain, LineChart, Flame, Globe2, Wallet, BookOpenCheck, Volume2, VolumeX,
+} from 'lucide-react'
+
+/* =============================================================================
+   RUMMAN.OS  //  Neural Operating System v2.045.11
+   A cinematic cyberpunk portfolio experience
+============================================================================= */
+
+// ---------------------- DATA ----------------------
+const DISTRICTS = [
+  {
+    id: '01',
+    key: 'identity',
+    name: 'Identity Core',
+    subtitle: 'Central Neural Nexus',
+    icon: Cpu,
+    color: 'cyan',
+    coord: 'GRID: 0451.02',
+    tag: 'CORE',
+    x: 50, y: 45,
+  },
+  {
+    id: '02',
+    key: 'education',
+    name: 'Education Nexus',
+    subtitle: 'Academy Sector',
+    icon: GraduationCap,
+    color: 'purple',
+    coord: 'GRID: 1289.14',
+    tag: 'ACADEMIC',
+    x: 22, y: 62,
+  },
+  {
+    id: '03',
+    key: 'corporate',
+    name: 'Corporate Sector',
+    subtitle: 'Skyscraper Row',
+    icon: Building2,
+    color: 'cyan',
+    coord: 'GRID: 4471.08',
+    tag: 'INDUSTRY',
+    x: 74, y: 30,
+  },
+  {
+    id: '04',
+    key: 'data',
+    name: 'The Data Center',
+    subtitle: 'Neural Substrate',
+    icon: Database,
+    color: 'blue',
+    coord: 'GRID: 2210.99',
+    tag: 'SYSTEMS',
+    x: 78, y: 68,
+  },
+  {
+    id: '05',
+    key: 'research',
+    name: 'Research Lab',
+    subtitle: 'Deep Learning Facility',
+    icon: FlaskConical,
+    color: 'purple',
+    coord: 'GRID: 3390.55',
+    tag: 'LABS',
+    x: 32, y: 30,
+  },
+  {
+    id: '06',
+    key: 'achievements',
+    name: 'Achievement Tower',
+    subtitle: 'Legacy Archive',
+    icon: Trophy,
+    color: 'orange',
+    coord: 'GRID: 5001.77',
+    tag: 'AWARDS',
+    x: 58, y: 22,
+  },
+  {
+    id: '07',
+    key: 'contact',
+    name: 'Mission Control',
+    subtitle: 'Uplink Terminal',
+    icon: Radio,
+    color: 'cyan',
+    coord: 'GRID: 9999.00',
+    tag: 'CONTACT',
+    x: 50, y: 78,
+  },
+]
+
+const SKILLS = [
+  { name: 'Python', level: 95, cat: 'Language' },
+  { name: 'SQL / PostgreSQL', level: 92, cat: 'Data' },
+  { name: 'Machine Learning', level: 90, cat: 'AI' },
+  { name: 'BERT / NLP', level: 85, cat: 'AI' },
+  { name: 'TF-IDF', level: 88, cat: 'AI' },
+  { name: 'Django', level: 82, cat: 'Backend' },
+  { name: 'JavaScript', level: 80, cat: 'Frontend' },
+  { name: 'Power BI', level: 90, cat: 'BI' },
+  { name: 'Tableau', level: 87, cat: 'BI' },
+  { name: 'Automation', level: 93, cat: 'Ops' },
+]
+
+const CORPORATES = [
+  {
+    name: 'FireAI Tower',
+    role: 'AI Business Analyst',
+    period: '2024 — Present',
+    color: '#ff5a1f',
+    accent: 'from-orange-500 to-red-500',
+    story: 'Deployed at the frontline of intelligent automation. Architected AI-driven workflows that translated raw operational data into revenue-shaping insight. Built LLM-augmented pipelines that reduced manual review cycles by 70% while lifting decision accuracy across product tiers.',
+    kpis: [
+      { label: 'Automation Uplift', value: '+70%' },
+      { label: 'Decision Latency', value: '-4.2x' },
+      { label: 'Insight Delivery', value: '11 Products' },
+    ],
+    stack: ['Python', 'LLMs', 'LangChain', 'PostgreSQL', 'FastAPI', 'BERT'],
+  },
+  {
+    name: 'Kotak Mahindra Tower',
+    role: 'Business Analyst Intern',
+    period: '2023',
+    color: '#00d1ff',
+    accent: 'from-cyan-400 to-blue-500',
+    story: 'Embedded inside one of India\u2019s largest financial institutions. Reverse-engineered legacy operational bottlenecks. Built forecasting dashboards that surfaced ₹-scale efficiency wins and became a decision-cockpit for senior leadership.',
+    kpis: [
+      { label: 'Reports Automated', value: '18' },
+      { label: 'Time Saved / week', value: '32 hrs' },
+      { label: 'Stakeholders Served', value: '9 Depts' },
+    ],
+    stack: ['SQL', 'Power BI', 'Excel VBA', 'Tableau', 'Python'],
+  },
+  {
+    name: 'Bluestock Tower',
+    role: 'Product & Data Analyst',
+    period: '2022',
+    color: '#b537f2',
+    accent: 'from-fuchsia-500 to-purple-600',
+    story: 'Turned market chaos into signal. Designed fintech data models to segment retail investor behavior. Delivered a product intelligence layer that shaped feature roadmap prioritisation and drove 3x engagement on high-value cohorts.',
+    kpis: [
+      { label: 'User Cohorts', value: '24' },
+      { label: 'Engagement Lift', value: '+312%' },
+      { label: 'Retention', value: '+41%' },
+    ],
+    stack: ['Python', 'ML', 'A/B Testing', 'Recharts', 'SQL'],
+  },
+]
+
+const RESEARCH = [
+  {
+    icon: Brain,
+    title: 'Emotion Detection Engine',
+    tag: 'NLP // BERT',
+    color: 'from-fuchsia-500 to-cyan-400',
+    story: 'A neural pipeline that reads between the lines of thousands of movie reviews. Fine-tuned transformer models detect nuance \u2014 joy, tension, betrayal \u2014 with 91% accuracy. Used as a benchmark for downstream sentiment products.',
+    demo: 'INPUT > "the ending shattered me in the best way" \u2192 EMOTION > catharsis (0.94)',
+  },
+  {
+    icon: Flame,
+    title: 'Wildfire Prediction System',
+    tag: 'GEOSPATIAL // ML',
+    color: 'from-orange-500 to-red-600',
+    story: 'Fused satellite imagery, humidity, wind vectors, and vegetation indices into a spatial ML model. Predicts ignition zones 72 hours ahead across kilometre-scale grids. Built as a public safety early-warning prototype.',
+    demo: 'REGION > CA-North \u2192 IGNITION RISK > 0.87 // HORIZON 72h',
+  },
+  {
+    icon: Wallet,
+    title: 'Vaultwise \u2014 Fintech Cockpit',
+    tag: 'PRODUCT // FULL-STACK',
+    color: 'from-cyan-400 to-blue-600',
+    story: 'A personal-finance operating layer. Real-time cash flow modelling, anomaly detection on spend patterns, and goal simulation. Built as a founder-mode product: from user interviews to live deployment.',
+    demo: 'CASHFLOW > +₹42,180 / 30d // ANOMALIES DETECTED > 3',
+  },
+  {
+    icon: BookOpenCheck,
+    title: 'RegradED \u2014 Education OS',
+    tag: 'EDTECH // FULL-STACK',
+    color: 'from-purple-500 to-fuchsia-500',
+    story: 'An adaptive learning pathway generator. Ingests student performance signals and reshapes course sequencing in real-time. Reduced average time-to-mastery by 28% in early cohorts.',
+    demo: 'LEARNER > alpha_224 \u2192 PATH REROUTED > Module 07 \u2192 Concept Bridge',
+  },
+]
+
+const ACHIEVEMENTS = [
+  { title: 'Goldman Sachs', sub: 'Engineering Excellence Program', tag: 'FINANCE' },
+  { title: 'AI Bootcamp', sub: 'Intensive Machine Learning Fellowship', tag: 'AI' },
+  { title: 'Web Development', sub: 'Full-Stack Certification', tag: 'DEV' },
+  { title: 'Leadership', sub: 'Cross-functional team leadership', tag: 'PEOPLE' },
+  { title: 'Competitions', sub: 'National-level hackathons & data challenges', tag: 'HACK' },
+  { title: 'Community Work', sub: 'Mentorship & open-source contributions', tag: 'IMPACT' },
+]
+
+const EDUCATION = [
+  {
+    year: '2020 — 2024',
+    school: 'Institute of Applied Computation',
+    degree: 'B.Tech, Computer Science & Engineering',
+    focus: 'AI • Data Systems • Product Engineering',
+    note: 'Graduated with distinction. Published a research paper on transformer-based sentiment engines.',
+  },
+  {
+    year: 'ONGOING',
+    school: 'Neural Continuous Learning',
+    degree: 'Self-Directed AI Research',
+    focus: 'LLM Ops • Multi-Agent Systems • RAG Architectures',
+    note: 'Actively shipping side projects at the frontier of applied intelligence.',
+  },
+]
+
+const IDENTITY = {
+  name: 'RUMMAN KHAN',
+  callsign: 'OPERATOR // RK-01',
+  status: 'ONLINE',
+  titles: [
+    'AI Business Analyst',
+    'Automation Engineer',
+    'Machine Learning Developer',
+    'Product Thinker',
+    'AI Enthusiast',
+    'Business + Technology Problem Solver',
+  ],
+  bio: 'A builder at the intersection of intelligence and impact. I engineer systems where machine learning stops being a demo and starts being a decision. I translate ambiguous business problems into deployable AI, and I ship products that people actually use \u2014 dashboards that get watched, models that get trusted, automations that outlast the meeting they were built in.',
+}
+
+// ---------------------- SUB-COMPONENTS ----------------------
+
+function RainLayer({ count = 60 }) {
+  const drops = useMemo(() => Array.from({ length: count }).map((_, i) => ({
+    left: Math.random() * 100,
+    delay: Math.random() * 5,
+    dur: 0.6 + Math.random() * 1.2,
+    op: 0.3 + Math.random() * 0.5,
+    h: 40 + Math.random() * 80,
+  })), [count])
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-[6]">
+      {drops.map((d, i) => (
+        <div key={i} className="rain-drop" style={{
+          left: `${d.left}%`,
+          animationDelay: `${d.delay}s`,
+          animationDuration: `${d.dur}s`,
+          opacity: d.op,
+          height: `${d.h}px`,
+        }} />
+      ))}
+    </div>
+  )
+}
+
+function Particles({ count = 40 }) {
+  const parts = useMemo(() => Array.from({ length: count }).map((_, i) => ({
+    left: Math.random() * 100,
+    top: 40 + Math.random() * 60,
+    dx: (Math.random() - 0.5) * 120 + 'px',
+    dy: -(60 + Math.random() * 160) + 'px',
+    delay: Math.random() * 6,
+    dur: 4 + Math.random() * 6,
+    color: Math.random() > 0.6 ? '#b537f2' : '#00f0ff',
+    size: 1 + Math.random() * 3,
+  })), [count])
+  return (
+    <div className="absolute inset-0 pointer-events-none z-[7]">
+      {parts.map((p, i) => (
+        <span key={i} className="particle" style={{
+          left: `${p.left}%`,
+          top: `${p.top}%`,
+          '--dx': p.dx,
+          '--dy': p.dy,
+          animationDelay: `${p.delay}s`,
+          animationDuration: `${p.dur}s`,
+          background: p.color,
+          boxShadow: `0 0 8px ${p.color}, 0 0 14px ${p.color}`,
+          width: `${p.size}px`,
+          height: `${p.size}px`,
+        }} />
+      ))}
+    </div>
+  )
+}
+
+function FlyingVehicle({ top = '30%', delay = 0, dur = 18, color = '#00f0ff' }) {
+  return (
+    <div className="flying-vehicle" style={{ top, animationDelay: `${delay}s`, animationDuration: `${dur}s` }}>
+      <div className="flex items-center gap-1">
+        <div className="w-6 h-[3px] rounded-full" style={{ background: color, boxShadow: `0 0 8px ${color}, 0 0 14px ${color}` }} />
+        <div className="w-1 h-1 rounded-full" style={{ background: '#fff', boxShadow: `0 0 6px #fff` }} />
+        <div className="w-16 h-[1px]" style={{ background: `linear-gradient(90deg, ${color}, transparent)`, opacity: 0.6 }} />
+      </div>
+    </div>
+  )
+}
+
+function CityBackdrop() {
+  return (
+    <div className="absolute inset-0 overflow-hidden city-bg">
+      {/* Distant skyline */}
+      <svg viewBox="0 0 1600 500" className="absolute bottom-0 left-0 w-full h-[70%] opacity-40" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="sky-far" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0a0d18" />
+            <stop offset="100%" stopColor="#1a0f2a" />
+          </linearGradient>
+        </defs>
+        {/* far buildings */}
+        {Array.from({ length: 40 }).map((_, i) => {
+          const w = 20 + (i * 37) % 40
+          const h = 80 + (i * 71) % 220
+          const x = i * 42
+          return (
+            <g key={i}>
+              <rect x={x} y={500 - h} width={w} height={h} fill="url(#sky-far)" />
+              {Array.from({ length: Math.floor(h / 20) }).map((_, j) => (
+                <rect key={j} x={x + 4} y={500 - h + 8 + j * 18} width={w - 8} height={6}
+                  fill={j % 3 === 0 ? '#00f0ff' : (j % 4 === 0 ? '#b537f2' : '#0080ff')}
+                  opacity={0.15 + ((i + j) % 4) * 0.12} />
+              ))}
+            </g>
+          )
+        })}
+      </svg>
+
+      {/* Mid skyline */}
+      <svg viewBox="0 0 1600 500" className="absolute bottom-0 left-0 w-full h-[55%] opacity-70" preserveAspectRatio="none">
+        {Array.from({ length: 24 }).map((_, i) => {
+          const w = 45 + (i * 53) % 65
+          const h = 180 + (i * 91) % 280
+          const x = i * 72
+          return (
+            <g key={i}>
+              <rect x={x} y={500 - h} width={w} height={h} fill="#05070c" stroke="#00f0ff" strokeOpacity="0.15" />
+              {/* antennae */}
+              {i % 3 === 0 && <rect x={x + w / 2 - 1} y={500 - h - 30} width="2" height="30" fill="#00f0ff" opacity="0.5" />}
+              {i % 3 === 0 && <circle cx={x + w / 2} cy={500 - h - 30} r="2" fill="#ff2bd6">
+                <animate attributeName="opacity" values="1;0.2;1" dur="1.5s" repeatCount="indefinite" />
+              </circle>}
+              {/* windows */}
+              {Array.from({ length: Math.floor(h / 22) }).map((_, j) => (
+                Array.from({ length: Math.floor(w / 12) }).map((_, k) => {
+                  const seed = (i * 13 + j * 7 + k * 17) % 100
+                  return (
+                    <rect key={`${j}-${k}`} x={x + 5 + k * 12} y={500 - h + 12 + j * 22} width="6" height="10"
+                      fill={seed % 7 === 0 ? '#ff2bd6' : (seed % 5 === 0 ? '#b537f2' : '#00f0ff')}
+                      opacity={seed % 4 === 0 ? 0.9 : 0.35} />
+                  )
+                })
+              ))}
+            </g>
+          )
+        })}
+      </svg>
+
+      {/* Near foreground silhouettes */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/70 to-transparent z-[3]" />
+
+      {/* Glowing horizon line */}
+      <div className="absolute bottom-[45%] left-0 right-0 h-[1px] z-[2]" style={{
+        background: 'linear-gradient(90deg, transparent, rgba(0,240,255,0.6), rgba(181,55,242,0.6), transparent)'
+      }} />
+
+      {/* Perspective floor grid */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 z-[2]">
+        <div className="cyber-grid-perspective w-full h-full" />
+      </div>
+
+      {/* Volumetric fog */}
+      <div className="absolute inset-0 z-[4]" style={{
+        background: 'radial-gradient(ellipse at 50% 100%, rgba(0,240,255,0.12), transparent 70%)',
+        filter: 'blur(20px)',
+      }} />
+      <div className="absolute inset-0 z-[4]" style={{
+        background: 'radial-gradient(ellipse at 20% 90%, rgba(181,55,242,0.18), transparent 60%)',
+        filter: 'blur(30px)',
+      }} />
+
+      {/* Flying vehicles */}
+      <FlyingVehicle top="18%" delay={0} dur={22} color="#00f0ff" />
+      <FlyingVehicle top="28%" delay={7} dur={26} color="#ff2bd6" />
+      <FlyingVehicle top="12%" delay={13} dur={30} color="#b537f2" />
+      <FlyingVehicle top="35%" delay={4} dur={24} color="#0080ff" />
+
+      {/* Digital billboards */}
+      <div className="absolute top-[35%] left-[8%] z-[3] hidden md:block">
+        <motion.div
+          animate={{ opacity: [0.4, 0.9, 0.5, 0.9, 0.4] }}
+          transition={{ duration: 4, repeat: Infinity }}
+          className="glass px-3 py-1 clip-notch-sm">
+          <div className="font-mono text-[10px] text-cyan-300">NEO-TOKYO // 04:32</div>
+        </motion.div>
+      </div>
+      <div className="absolute top-[22%] right-[10%] z-[3] hidden md:block">
+        <motion.div
+          animate={{ opacity: [0.5, 1, 0.6, 1, 0.5] }}
+          transition={{ duration: 3.5, repeat: Infinity }}
+          className="glass px-3 py-1 clip-notch-sm border border-fuchsia-400/50">
+          <div className="font-mono text-[10px] text-fuchsia-300">RUMMAN.OS ● LIVE</div>
+        </motion.div>
+      </div>
+
+      {/* Rain + particles */}
+      <RainLayer count={80} />
+      <Particles count={45} />
+
+      {/* Scanline overlay */}
+      <div className="absolute inset-0 scanlines pointer-events-none z-[8]" />
+
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+        background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%)'
+      }} />
+    </div>
+  )
+}
+
+// ---------------------- BOOT SEQUENCE ----------------------
+const BOOT_LINES = [
+  { t: 'RUMMAN.OS BOOT LOADER v2.045.11', d: 250 },
+  { t: '> POWER: STABLE // 220v NEURAL BUS', d: 220 },
+  { t: '> INITIALIZING KERNEL...........[ OK ]', d: 260 },
+  { t: '> MOUNTING /dev/neural0.........[ OK ]', d: 220 },
+  { t: '> LOADING CORTEX SUBSYSTEMS.....[ OK ]', d: 240 },
+  { t: '> ESTABLISHING UPLINK: hyper-net// [ HANDSHAKE ]', d: 260 },
+  { t: '> SCANNING VISITOR BIOMETRICS...', d: 260 },
+  { t: '> IDENTITY VERIFIED: GUEST // CLEARANCE-3', d: 240 },
+  { t: '> DECRYPTING PORTFOLIO CORE.....[ OK ]', d: 240 },
+  { t: '> CONNECTING TO NEURAL NETWORK..[ OK ]', d: 240 },
+  { t: '', d: 100 },
+  { t: '>> ACCESS GRANTED', d: 400, hi: true },
+  { t: '>> WELCOME, OPERATOR.', d: 500, hi: true },
+]
+
+function BootSequence({ onFinish }) {
+  const [visibleLines, setVisibleLines] = useState([])
+  const [phase, setPhase] = useState('boot') // boot -> title -> zoom
+  const [skip, setSkip] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    let idx = 0
+    const run = async () => {
+      for (let i = 0; i < BOOT_LINES.length; i++) {
+        if (cancelled) return
+        await new Promise(r => setTimeout(r, BOOT_LINES[i].d))
+        if (cancelled) return
+        setVisibleLines(prev => [...prev, BOOT_LINES[i]])
+      }
+      await new Promise(r => setTimeout(r, 500))
+      if (!cancelled) setPhase('title')
+      await new Promise(r => setTimeout(r, 3200))
+      if (!cancelled) setPhase('zoom')
+      await new Promise(r => setTimeout(r, 1600))
+      if (!cancelled) onFinish()
+    }
+    run()
+    return () => { cancelled = true }
+  }, [onFinish])
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+        onFinish()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onFinish])
+
+  return (
+    <motion.div
+      key="boot"
+      className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* subtle background grid */}
+      <div className="absolute inset-0 cyber-grid-sm opacity-30" />
+      <div className="absolute inset-0 scanlines" />
+
+      {/* skip hint */}
+      <div className="absolute top-6 right-6 font-mono text-xs text-cyan-400/70 z-50">
+        [ press SPACE to skip ]
+      </div>
+
+      <AnimatePresence mode="wait">
+        {phase === 'boot' && (
+          <motion.div
+            key="term"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.1 }}
+            className="relative z-10 w-full max-w-3xl px-6 sm:px-10"
+          >
+            <div className="glass-dark clip-notch p-6 sm:p-8 corner-brackets">
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-cyan-400/20">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_#f00]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_#ff0]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#0ff]" />
+                <div className="ml-3 font-mono text-xs text-cyan-300/80">rumman.os //terminal</div>
+              </div>
+              <div className="font-mono text-[13px] sm:text-sm leading-relaxed min-h-[280px]">
+                {visibleLines.map((l, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className={l.hi ? 'text-fuchsia-300 neon-text-purple text-base sm:text-lg mt-2' : 'text-cyan-200'}
+                  >
+                    {l.t}
+                  </motion.div>
+                ))}
+                <div className="term-cursor text-cyan-300" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {phase === 'title' && (
+          <motion.div
+            key="title"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.2 }}
+            transition={{ duration: 0.8 }}
+            className="relative z-10 text-center px-6"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="font-mono text-xs sm:text-sm text-cyan-400/80 mb-4"
+            >
+              [ NEURAL OPERATING SYSTEM ]
+            </motion.div>
+            <h1 className="font-display font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl glitch neon-text"
+              data-text="RUMMAN.OS">
+              RUMMAN.OS
+            </h1>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="h-[2px] mt-4 mx-auto max-w-md"
+              style={{ background: 'linear-gradient(90deg, transparent, #00f0ff, #b537f2, transparent)' }}
+            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+              className="font-body mt-5 text-cyan-100/80 text-lg sm:text-xl tracking-widest uppercase"
+            >
+              Welcome, Operator
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.9 }}
+              className="font-mono mt-8 text-xs text-fuchsia-300/70"
+            >
+              // engaging camera drop into city grid //
+            </motion.div>
+          </motion.div>
+        )}
+
+        {phase === 'zoom' && (
+          <motion.div
+            key="zoom"
+            initial={{ scale: 1, opacity: 1 }}
+            animate={{ scale: 8, opacity: 0 }}
+            transition={{ duration: 1.6, ease: [0.7, 0, 0.3, 1] }}
+            className="relative z-10 text-center"
+          >
+            <div className="font-display font-black text-8xl neon-text">RUMMAN.OS</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+// ---------------------- HUD ----------------------
+function HUD({ current, onExit, timeStr }) {
+  return (
+    <div className="fixed inset-0 pointer-events-none z-40">
+      {/* Top bar */}
+      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between">
+        <div className="pointer-events-auto flex items-center gap-3">
+          <div className="glass px-3 py-1.5 clip-notch-sm flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-cyan-400 pulse-neon" />
+            <span className="font-mono text-[11px] tracking-widest text-cyan-200">RUMMAN.OS</span>
+            <span className="font-mono text-[10px] text-cyan-400/70">v2.045.11</span>
+          </div>
+          <div className="hidden sm:flex glass px-3 py-1.5 clip-notch-sm items-center gap-2">
+            <Wifi className="w-3.5 h-3.5 text-cyan-300" />
+            <span className="font-mono text-[10px] text-cyan-300/90">HYPER-NET // 12.4 Gb/s</span>
+          </div>
+          <div className="hidden md:flex glass px-3 py-1.5 clip-notch-sm items-center gap-2">
+            <Shield className="w-3.5 h-3.5 text-fuchsia-300" />
+            <span className="font-mono text-[10px] text-fuchsia-200">CLEARANCE-3</span>
+          </div>
+        </div>
+
+        <div className="pointer-events-auto flex items-center gap-3">
+          <div className="hidden sm:flex glass px-3 py-1.5 clip-notch-sm items-center gap-2">
+            <Activity className="w-3.5 h-3.5 text-cyan-300" />
+            <span className="font-mono text-[10px] text-cyan-200">CORE 42°C</span>
+          </div>
+          <div className="glass px-3 py-1.5 clip-notch-sm">
+            <span className="font-mono text-[11px] text-cyan-200">{timeStr}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom-left mini map / radar */}
+      <div className="absolute bottom-4 left-4 pointer-events-auto">
+        <div className="glass-dark p-3 clip-notch-sm relative overflow-hidden w-[190px]">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-mono text-[10px] text-cyan-300/80">MINI-MAP</span>
+            <Radar className="w-3.5 h-3.5 text-cyan-300" />
+          </div>
+          <div className="relative w-full h-[140px] rounded-sm overflow-hidden border border-cyan-400/30 bg-black/50">
+            <div className="absolute inset-0 cyber-grid-sm opacity-40" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full h-full radar-sweep opacity-40" />
+            </div>
+            {DISTRICTS.map(d => (
+              <div key={d.id}
+                className={`absolute w-2 h-2 rounded-full ${current === d.key ? 'bg-fuchsia-400' : 'bg-cyan-400'}`}
+                style={{
+                  left: `${d.x}%`, top: `${d.y}%`,
+                  boxShadow: `0 0 6px ${current === d.key ? '#ff2bd6' : '#00f0ff'}`,
+                  transform: 'translate(-50%, -50%)',
+                }}
+              />
+            ))}
+          </div>
+          <div className="mt-2 font-mono text-[9px] text-cyan-400/60">
+            {current ? `LOCATED: ${DISTRICTS.find(d => d.key === current)?.name}` : 'ROAMING // CITY GRID'}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom-right status */}
+      <div className="absolute bottom-4 right-4 pointer-events-auto flex flex-col gap-2 items-end">
+        <div className="glass-dark px-3 py-2 clip-notch-sm flex items-center gap-2">
+          <Zap className="w-3.5 h-3.5 text-cyan-300" />
+          <div className="font-mono text-[10px]">
+            <div className="text-cyan-200">MISSION LOG</div>
+            <div className="text-cyan-400/70">
+              {current ? `> exploring ${DISTRICTS.find(d => d.key === current)?.name}` : '> select a district to enter'}
+            </div>
+          </div>
+        </div>
+        {current && (
+          <button
+            onClick={onExit}
+            className="glass-dark px-3 py-2 clip-notch-sm flex items-center gap-2 hover:bg-fuchsia-500/10 transition-colors border-fuchsia-400/40"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-fuchsia-300" />
+            <span className="font-mono text-[10px] text-fuchsia-200">EXIT DISTRICT [ESC]</span>
+          </button>
+        )}
+      </div>
+
+      {/* Center crosshair */}
+      {!current && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative w-24 h-24 opacity-40">
+            <div className="absolute top-1/2 left-0 w-6 h-[1px] bg-cyan-400" />
+            <div className="absolute top-1/2 right-0 w-6 h-[1px] bg-cyan-400" />
+            <div className="absolute left-1/2 top-0 w-[1px] h-6 bg-cyan-400" />
+            <div className="absolute left-1/2 bottom-0 w-[1px] h-6 bg-cyan-400" />
+            <div className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 -translate-x-1/2 -translate-y-1/2 shadow-[0_0_8px_#0ff]" />
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------- DISTRICT WAYPOINTS (on city view) ----------------------
+function DistrictWaypoint({ district, onSelect, index }) {
+  const Icon = district.icon
+  const colorMap = {
+    cyan: { ring: 'border-cyan-400', glow: '0 0 20px rgba(0,240,255,0.7), 0 0 60px rgba(0,240,255,0.35)', text: 'text-cyan-200', bg: 'bg-cyan-500/10' },
+    purple: { ring: 'border-fuchsia-400', glow: '0 0 20px rgba(255,43,214,0.7), 0 0 60px rgba(181,55,242,0.35)', text: 'text-fuchsia-200', bg: 'bg-fuchsia-500/10' },
+    blue: { ring: 'border-blue-400', glow: '0 0 20px rgba(0,128,255,0.7), 0 0 60px rgba(0,128,255,0.35)', text: 'text-blue-200', bg: 'bg-blue-500/10' },
+    orange: { ring: 'border-orange-400', glow: '0 0 20px rgba(255,138,26,0.7), 0 0 60px rgba(255,138,26,0.35)', text: 'text-orange-200', bg: 'bg-orange-500/10' },
+  }
+  const c = colorMap[district.color] || colorMap.cyan
+
+  return (
+    <motion.button
+      onClick={() => onSelect(district)}
+      className="absolute -translate-x-1/2 -translate-y-1/2 group focus:outline-none"
+      style={{ left: `${district.x}%`, top: `${district.y}%` }}
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.1 + index * 0.08, type: 'spring', stiffness: 120 }}
+      whileHover={{ scale: 1.08 }}
+    >
+      {/* pulsing ring */}
+      <motion.div
+        className={`absolute inset-0 rounded-full border ${c.ring}`}
+        animate={{ scale: [1, 1.8, 2.4], opacity: [0.7, 0.2, 0] }}
+        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut' }}
+        style={{ width: 60, height: 60, top: -30, left: -30 }}
+      />
+      <motion.div
+        className={`absolute inset-0 rounded-full border ${c.ring}`}
+        animate={{ scale: [1, 1.8, 2.4], opacity: [0.7, 0.2, 0] }}
+        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut', delay: 1.1 }}
+        style={{ width: 60, height: 60, top: -30, left: -30 }}
+      />
+
+      {/* main hex marker */}
+      <div className={`relative w-[60px] h-[60px] flex items-center justify-center clip-hex ${c.bg} backdrop-blur-md border-2 ${c.ring}`}
+        style={{ boxShadow: c.glow }}>
+        <Icon className={`w-6 h-6 ${c.text}`} />
+      </div>
+
+      {/* label */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-[68px] w-max opacity-90 group-hover:opacity-100 transition-opacity">
+        <div className="glass px-2.5 py-1 clip-notch-sm text-center">
+          <div className={`font-mono text-[9px] ${c.text}/80`}>{district.tag} // {district.id}</div>
+          <div className={`font-display text-[11px] font-bold ${c.text} tracking-wider`}>{district.name}</div>
+        </div>
+      </div>
+    </motion.button>
+  )
+}
+
+// ---------------------- CITY VIEW ----------------------
+function CityView({ onEnter }) {
+  return (
+    <motion.div
+      key="city"
+      initial={{ opacity: 0, scale: 1.2 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 1.2, ease: [0.2, 0.8, 0.2, 1] }}
+      className="fixed inset-0 z-10"
+    >
+      <CityBackdrop />
+
+      {/* Central hologram title */}
+      <div className="absolute top-[8%] left-0 right-0 z-30 flex flex-col items-center px-6 text-center pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+          className="font-mono text-[11px] tracking-[0.4em] text-cyan-400/80"
+        >
+          [ N E O — C I T Y // S E C T O R  0 4 5 1 ]
+        </motion.div>
+        <motion.h2
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
+          className="font-display font-black text-3xl sm:text-5xl md:text-6xl neon-text mt-2 glitch"
+          data-text="THE ARCHITECT&apos;S GRID"
+        >
+          THE ARCHITECT&apos;S GRID
+        </motion.h2>
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+          className="font-body text-cyan-100/70 text-sm sm:text-base mt-2 max-w-2xl"
+        >
+          Navigate the neural districts. Every waypoint decrypts a chapter of the operator&apos;s memory.
+        </motion.div>
+      </div>
+
+      {/* District waypoints */}
+      <div className="absolute inset-0 z-20">
+        {DISTRICTS.map((d, i) => (
+          <DistrictWaypoint key={d.id} district={d} onSelect={onEnter} index={i} />
+        ))}
+      </div>
+
+      {/* Bottom controls */}
+      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}
+          className="glass-dark px-5 py-2.5 clip-notch flex items-center gap-4"
+        >
+          <span className="font-mono text-[10px] text-cyan-300/80">CLICK A HOLO-WAYPOINT TO ENTER</span>
+          <span className="w-[1px] h-4 bg-cyan-400/40" />
+          <span className="font-mono text-[10px] text-fuchsia-300/80">ESC TO EXIT DISTRICT</span>
+        </motion.div>
+      </div>
+    </motion.div>
+  )
+}
+
+// ---------------------- DISTRICT PANEL WRAPPER ----------------------
+function DistrictPanel({ district, children, onClose }) {
+  const Icon = district.icon
+  return (
+    <motion.div
+      key={district.key}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+      className="fixed inset-0 z-30 overflow-y-auto"
+    >
+      {/* backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+
+      {/* content */}
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.98 }}
+        transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+        className="relative min-h-full py-10 px-4 sm:px-8 max-w-7xl mx-auto"
+      >
+        {/* header */}
+        <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 clip-hex flex items-center justify-center bg-cyan-500/10 border-2 border-cyan-400 neon-border">
+              <Icon className="w-6 h-6 text-cyan-200" />
+            </div>
+            <div>
+              <div className="font-mono text-[10px] text-cyan-400/80">DISTRICT {district.id} // {district.coord}</div>
+              <h2 className="font-display font-black text-2xl sm:text-4xl neon-text glitch"
+                data-text={district.name}>{district.name}</h2>
+              <div className="font-body text-fuchsia-200/80 text-sm mt-0.5">{district.subtitle}</div>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="glass px-3 py-2 clip-notch-sm flex items-center gap-2 hover:bg-fuchsia-500/10 transition-colors border border-fuchsia-400/40"
+          >
+            <X className="w-4 h-4 text-fuchsia-200" />
+            <span className="font-mono text-[10px] text-fuchsia-200">EXIT</span>
+          </button>
+        </div>
+
+        {children}
+
+        {/* footer separator */}
+        <div className="mt-12 h-[1px] w-full opacity-40" style={{
+          background: 'linear-gradient(90deg, transparent, #00f0ff, transparent)'
+        }} />
+        <div className="mt-3 font-mono text-[10px] text-cyan-500/50 text-center">
+          END OF SECTOR // RUMMAN.OS v2.045.11 // NEURAL-LINK STABLE
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// ---------------------- DISTRICT CONTENT: IDENTITY CORE ----------------------
+function DistrictIdentity() {
+  return (
+    <div className="grid lg:grid-cols-5 gap-6">
+      {/* Massive AI core */}
+      <div className="lg:col-span-2 relative glass-dark clip-notch p-8 min-h-[520px] flex flex-col items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 opacity-40" style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(0,240,255,0.2), transparent 60%)'
+        }} />
+        {/* Rotating rings */}
+        <motion.div
+          animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-[340px] h-[340px] rounded-full border border-cyan-400/40"
+          style={{ boxShadow: 'inset 0 0 40px rgba(0,240,255,0.3)' }}
+        />
+        <motion.div
+          animate={{ rotate: -360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-[280px] h-[280px] rounded-full border border-fuchsia-400/40 border-dashed"
+        />
+        <motion.div
+          animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-[200px] h-[200px] rounded-full border-2 border-cyan-300/60"
+        />
+        {/* Core orb */}
+        <motion.div
+          animate={{ scale: [1, 1.06, 1] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          className="relative w-32 h-32 rounded-full flex items-center justify-center"
+          style={{
+            background: 'radial-gradient(circle at 30% 30%, #b537f2, #00f0ff 55%, #05070c 90%)',
+            boxShadow: '0 0 40px rgba(0,240,255,0.8), 0 0 90px rgba(181,55,242,0.6)'
+          }}
+        >
+          <div className="absolute inset-0 rounded-full mix-blend-overlay" style={{
+            background: 'conic-gradient(from 0deg, transparent, rgba(255,255,255,0.4), transparent 30%)'
+          }} />
+          <Cpu className="w-10 h-10 text-white relative z-10 drop-shadow-[0_0_10px_#0ff]" />
+        </motion.div>
+
+        {/* corner readouts */}
+        <div className="absolute top-4 left-4 font-mono text-[9px] text-cyan-300/80">
+          <div>NEURAL CORE</div>
+          <div>UPTIME: 24y 08m</div>
+        </div>
+        <div className="absolute top-4 right-4 font-mono text-[9px] text-fuchsia-300/80 text-right">
+          <div>STATUS: ACTIVE</div>
+          <div className="flex items-center gap-1 justify-end">
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-neon" />
+            SYNCED
+          </div>
+        </div>
+        <div className="absolute bottom-4 left-4 right-4 font-mono text-[9px] text-cyan-400/60 flex justify-between">
+          <span>CLK: 4.6 GHz</span>
+          <span>MEM: ∞</span>
+          <span>THR: 128</span>
+        </div>
+      </div>
+
+      {/* Identity dossier */}
+      <div className="lg:col-span-3 space-y-4">
+        <div className="glass-dark clip-notch p-6 corner-brackets relative overflow-hidden">
+          <div className="font-mono text-[10px] text-cyan-400/80">// OPERATOR PROFILE //</div>
+          <h3 className="font-display font-black text-3xl sm:text-5xl neon-text-purple mt-2 glitch" data-text={IDENTITY.name}>
+            {IDENTITY.name}
+          </h3>
+          <div className="mt-1 font-mono text-xs text-fuchsia-300/80">{IDENTITY.callsign}</div>
+
+          {/* Titles chips */}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {IDENTITY.titles.map((t, i) => (
+              <motion.div
+                key={t}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.06 }}
+                className="glass px-3 py-1.5 clip-notch-sm"
+              >
+                <span className="font-body text-xs sm:text-sm text-cyan-100 tracking-wide">{t}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bio */}
+        <div className="glass-dark clip-notch p-6 relative">
+          <div className="font-mono text-[10px] text-cyan-400/80 mb-2">// TRANSMISSION LOG // DECRYPTED</div>
+          <p className="font-body text-cyan-50/90 text-base sm:text-lg leading-relaxed">
+            {IDENTITY.bio}
+          </p>
+          <div className="mt-4 flex items-center gap-2">
+            <Volume2 className="w-3.5 h-3.5 text-cyan-300" />
+            <span className="font-mono text-[10px] text-cyan-400/60">voice-print: MATCH 99.7%</span>
+          </div>
+        </div>
+
+        {/* Vitals */}
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { l: 'PROJECTS', v: '20+' },
+            { l: 'YEARS ACTIVE', v: '4' },
+            { l: 'DOMAINS', v: '6' },
+          ].map((x) => (
+            <div key={x.l} className="glass clip-notch-sm p-3 text-center">
+              <div className="font-display text-2xl font-black neon-text">{x.v}</div>
+              <div className="font-mono text-[9px] text-cyan-400/70 mt-1">{x.l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------- DISTRICT: EDUCATION ----------------------
+function DistrictEducation() {
+  return (
+    <div className="grid md:grid-cols-3 gap-6">
+      <div className="md:col-span-1 glass-dark clip-notch p-6 relative overflow-hidden">
+        <div className="font-mono text-[10px] text-cyan-400/80">// ACADEMY CORE //</div>
+        <h3 className="font-display text-2xl font-bold neon-text mt-2">Interactive Holo-Classroom</h3>
+        <div className="mt-4 space-y-2 font-mono text-[11px]">
+          <div className="flex justify-between text-cyan-200"><span>SUBJECTS</span><span>048</span></div>
+          <div className="flex justify-between text-cyan-200"><span>CERTS</span><span>12</span></div>
+          <div className="flex justify-between text-cyan-200"><span>SEMS COMPLETED</span><span>08</span></div>
+          <div className="flex justify-between text-fuchsia-200"><span>RESEARCH PAPERS</span><span>02</span></div>
+        </div>
+        {/* holo animation */}
+        <div className="mt-6 relative h-32 rounded-md border border-cyan-400/30 bg-black/40 overflow-hidden">
+          <div className="absolute inset-0 cyber-grid-sm opacity-40" />
+          <motion.div
+            animate={{ y: [0, -8, 0], opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 3, repeat: Infinity }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <GraduationCap className="w-20 h-20 text-fuchsia-300 drop-shadow-[0_0_20px_#b537f2]" />
+          </motion.div>
+          <div className="absolute bottom-2 left-2 font-mono text-[9px] text-cyan-400/70">holo // classroom.render</div>
+        </div>
+      </div>
+
+      <div className="md:col-span-2 space-y-4">
+        <div className="font-mono text-[10px] text-cyan-400/80">// EDUCATION TIMELINE //</div>
+        {EDUCATION.map((e, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.15 }}
+            className="glass-dark clip-notch p-5 relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-cyan-400 to-fuchsia-500" />
+            <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
+              <div className="font-mono text-[10px] text-fuchsia-300/80">{e.year}</div>
+              <div className="font-mono text-[10px] text-cyan-400/70">NODE // {String(i + 1).padStart(2, '0')}</div>
+            </div>
+            <h4 className="font-display font-bold text-xl text-cyan-100">{e.school}</h4>
+            <div className="font-body text-cyan-200/90 mt-1">{e.degree}</div>
+            <div className="mt-2 font-mono text-[11px] text-fuchsia-200/80">{e.focus}</div>
+            <div className="mt-3 font-body text-sm text-cyan-100/70">{e.note}</div>
+          </motion.div>
+        ))}
+
+        {/* Future vision */}
+        <div className="glass-dark clip-notch p-5 relative">
+          <div className="font-mono text-[10px] text-fuchsia-400/80">// FUTURE VISION //</div>
+          <p className="font-body text-cyan-50/90 mt-2">
+            The next horizon: building applied AI systems that agentically orchestrate business workflows. Contributing to open research on trustworthy LLMs, and eventually shipping a product studio at the intersection of AI + finance + education.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------- DISTRICT: CORPORATE ----------------------
+function CorporateTower({ tower, i, onOpen, active }) {
+  return (
+    <motion.button
+      layout
+      onClick={() => onOpen(i)}
+      initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: i * 0.12 }}
+      className="relative group text-left focus:outline-none"
+    >
+      <div className={`glass-dark clip-notch p-5 relative overflow-hidden transition-all border`}
+        style={{
+          borderColor: active ? tower.color : 'rgba(0,240,255,0.25)',
+          boxShadow: active ? `0 0 30px ${tower.color}66` : undefined,
+        }}
+      >
+        {/* Tower silhouette */}
+        <div className="relative h-40 mb-4 flex items-end justify-center">
+          <div className="relative w-14 h-full flex flex-col-reverse items-center">
+            <div className="w-full h-full rounded-t-sm relative overflow-hidden"
+              style={{ background: `linear-gradient(180deg, ${tower.color}22, #05070c)`, border: `1px solid ${tower.color}66` }}>
+              {Array.from({ length: 12 }).map((_, j) => (
+                <div key={j} className="flex gap-[3px] justify-center py-[3px]">
+                  {Array.from({ length: 4 }).map((_, k) => (
+                    <div key={k} className="w-1 h-1"
+                      style={{ background: (j + k) % 3 === 0 ? tower.color : `${tower.color}55`, opacity: (j * k + i) % 4 === 0 ? 1 : 0.4 }} />
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="w-[2px] h-6 -mt-6" style={{ background: tower.color, boxShadow: `0 0 8px ${tower.color}` }} />
+            <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }}
+              className="w-1.5 h-1.5 rounded-full -mt-6" style={{ background: '#ff2bd6', boxShadow: '0 0 8px #ff2bd6' }} />
+          </div>
+          {/* hologram plate */}
+          <div className="absolute bottom-0 left-0 right-0 h-2 mx-auto w-24 rounded-full"
+            style={{ background: `radial-gradient(ellipse at center, ${tower.color}66, transparent)` }} />
+        </div>
+        <div className="font-mono text-[10px] text-cyan-400/80">{tower.period}</div>
+        <h4 className="font-display font-bold text-lg mt-1" style={{ color: tower.color }}>{tower.name}</h4>
+        <div className="font-body text-sm text-cyan-100/90">{tower.role}</div>
+
+        <div className="mt-3 flex items-center justify-between">
+          <span className="font-mono text-[10px] text-cyan-400/70">CLICK TO ENTER</span>
+          <ChevronRight className="w-3.5 h-3.5 text-cyan-300 group-hover:translate-x-1 transition-transform" />
+        </div>
+      </div>
+    </motion.button>
+  )
+}
+
+function CorporateDetail({ tower, onClose }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
+      className="glass-dark clip-notch p-6 relative overflow-hidden border"
+      style={{ borderColor: tower.color }}
+    >
+      <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 hover:bg-fuchsia-500/20 transition">
+        <X className="w-4 h-4 text-fuchsia-300" />
+      </button>
+      <div className="font-mono text-[10px]" style={{ color: tower.color }}>// BUILDING INTERIOR // AUTHENTICATED</div>
+      <h3 className="font-display font-black text-3xl mt-2" style={{ color: tower.color }}>{tower.name}</h3>
+      <div className="font-body text-cyan-100/90 mt-1">{tower.role} • {tower.period}</div>
+
+      <p className="mt-5 font-body text-cyan-50/90 leading-relaxed max-w-3xl">{tower.story}</p>
+
+      {/* KPI dashboard */}
+      <div className="mt-6 grid sm:grid-cols-3 gap-3">
+        {tower.kpis.map((kpi, i) => (
+          <motion.div
+            key={kpi.label}
+            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.1 }}
+            className="glass p-4 clip-notch-sm relative overflow-hidden"
+          >
+            <div className="font-mono text-[9px] text-cyan-400/70 uppercase tracking-widest">{kpi.label}</div>
+            <div className="font-display font-black text-3xl mt-1" style={{ color: tower.color, textShadow: `0 0 12px ${tower.color}` }}>
+              {kpi.value}
+            </div>
+            {/* animated bar */}
+            <div className="mt-2 h-1 rounded-full bg-cyan-500/10 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }} animate={{ width: '80%' }}
+                transition={{ duration: 1.2, delay: 0.2 + i * 0.15 }}
+                className="h-full" style={{ background: `linear-gradient(90deg, ${tower.color}, #b537f2)` }}
+              />
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Stack */}
+      <div className="mt-5">
+        <div className="font-mono text-[10px] text-cyan-400/70 mb-2">// TECH STACK //</div>
+        <div className="flex flex-wrap gap-2">
+          {tower.stack.map((s) => (
+            <span key={s} className="glass px-3 py-1 clip-notch-sm font-mono text-[11px] text-cyan-100">{s}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Animated data graph */}
+      <div className="mt-6 relative h-24 rounded-md border border-cyan-400/30 bg-black/40 overflow-hidden">
+        <div className="absolute inset-0 cyber-grid-sm opacity-40" />
+        <svg viewBox="0 0 400 100" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+          <motion.path
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2, ease: 'easeInOut' }}
+            d="M 0 80 Q 50 60 80 55 T 160 40 T 240 30 T 320 20 T 400 10"
+            stroke={tower.color} strokeWidth="2" fill="none"
+            style={{ filter: `drop-shadow(0 0 6px ${tower.color})` }}
+          />
+        </svg>
+        <div className="absolute bottom-2 left-2 font-mono text-[9px] text-cyan-400/70">IMPACT CURVE // TREND ↑</div>
+      </div>
+    </motion.div>
+  )
+}
+
+function DistrictCorporate() {
+  const [open, setOpen] = useState(null)
+  return (
+    <div className="space-y-6">
+      <div className="grid md:grid-cols-3 gap-4">
+        {CORPORATES.map((t, i) => (
+          <CorporateTower key={t.name} tower={t} i={i} onOpen={setOpen} active={open === i} />
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        {open !== null && <CorporateDetail key={open} tower={CORPORATES[open]} onClose={() => setOpen(null)} />}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ---------------------- DISTRICT: DATA CENTER (SKILLS) ----------------------
+function DistrictData() {
+  const [selected, setSelected] = useState(null)
+  return (
+    <div className="grid lg:grid-cols-5 gap-6">
+      <div className="lg:col-span-3">
+        <div className="font-mono text-[10px] text-cyan-400/80 mb-3">// NEURAL SUBSTRATE // ACTIVE MODULES //</div>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {SKILLS.map((s, i) => (
+            <motion.button
+              key={s.name}
+              onClick={() => setSelected(s)}
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className={`glass-dark clip-notch-sm p-4 text-left relative overflow-hidden hover:border-fuchsia-400 transition ${selected?.name === s.name ? 'border-fuchsia-400' : ''}`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="font-mono text-[9px] text-fuchsia-300/70">{s.cat}</div>
+                  <div className="font-display font-bold text-lg text-cyan-100">{s.name}</div>
+                </div>
+                <div className="font-mono text-cyan-300 text-sm">{s.level}%</div>
+              </div>
+              <div className="mt-2 h-1 bg-cyan-500/10 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }} animate={{ width: `${s.level}%` }}
+                  transition={{ duration: 1.2, delay: 0.2 + i * 0.05 }}
+                  className="h-full progress-bar-fill"
+                />
+              </div>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      <div className="lg:col-span-2 space-y-3">
+        {/* Data center hologram */}
+        <div className="glass-dark clip-notch p-5 relative overflow-hidden h-64">
+          <div className="font-mono text-[10px] text-cyan-400/80">// SERVER STACK //</div>
+          <div className="absolute inset-0 top-8 flex items-end justify-around px-6 pb-6 gap-3">
+            {[70, 40, 90, 55, 80, 65].map((h, i) => (
+              <motion.div
+                key={i}
+                initial={{ height: 0 }} animate={{ height: `${h}%` }}
+                transition={{ duration: 1, delay: i * 0.15 }}
+                className="flex-1 rounded-t"
+                style={{
+                  background: `linear-gradient(180deg, #00f0ff, #b537f2)`,
+                  boxShadow: '0 0 12px rgba(0,240,255,0.5)',
+                  opacity: 0.85,
+                }}
+              />
+            ))}
+          </div>
+          <div className="absolute bottom-2 left-4 right-4 flex justify-between font-mono text-[8px] text-cyan-400/60">
+            <span>node-01</span><span>node-02</span><span>node-03</span><span>node-04</span><span>node-05</span><span>node-06</span>
+          </div>
+        </div>
+
+        {/* SQL floating */}
+        <div className="glass-dark clip-notch p-5 relative overflow-hidden h-64">
+          <div className="font-mono text-[10px] text-cyan-400/80">// LIVE QUERY STREAM //</div>
+          <div className="relative h-full overflow-hidden mt-3">
+            <div className="data-stream absolute inset-x-0">
+              {[
+                'SELECT model, accuracy FROM emotion_engine ORDER BY score DESC;',
+                'CREATE INDEX idx_wildfire_grid ON regions USING gist(coords);',
+                'UPDATE users SET tier = "high_value" WHERE ltv > 42000;',
+                'WITH cohort AS (SELECT * FROM signups WHERE...);',
+                'MATCH (n:Neuron)-[:CONNECTS]->(m) RETURN n, m;',
+                'INSERT INTO predictions VALUES (\'ignition\', 0.87, ...);',
+                'SELECT emb FROM vectors WHERE cosine(emb, :q) < 0.2;',
+                'ALTER TABLE workflows ADD COLUMN llm_verified BOOL;',
+              ].concat([
+                'SELECT model, accuracy FROM emotion_engine ORDER BY score DESC;',
+                'CREATE INDEX idx_wildfire_grid ON regions USING gist(coords);',
+                'UPDATE users SET tier = "high_value" WHERE ltv > 42000;',
+                'WITH cohort AS (SELECT * FROM signups WHERE...);',
+              ]).map((q, i) => (
+                <div key={i} className="font-mono text-[10px] text-cyan-300/80 py-1 border-b border-cyan-400/10">
+                  <span className="text-fuchsia-300/70 mr-2">$</span>{q}
+                </div>
+              ))}
+            </div>
+            <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#05070c] to-transparent pointer-events-none" />
+          </div>
+        </div>
+      </div>
+
+      {/* Selected skill detail */}
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="lg:col-span-5 glass-dark clip-notch p-6 relative border border-fuchsia-400/40"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="font-mono text-[10px] text-fuchsia-400/80">// MODULE DECRYPTED //</div>
+                <h4 className="font-display font-black text-2xl neon-text-purple mt-1">{selected.name}</h4>
+                <div className="font-mono text-xs text-cyan-300 mt-1">{selected.cat} • proficiency {selected.level}%</div>
+              </div>
+              <button onClick={() => setSelected(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/40 hover:bg-fuchsia-500/20">
+                <X className="w-4 h-4 text-fuchsia-300" />
+              </button>
+            </div>
+            <p className="mt-3 font-body text-cyan-50/90 max-w-3xl">
+              Deployed in production pipelines across multiple domains — from finance analytics dashboards to NLP-driven decision engines. Battle-tested through real business outcomes, not just demos.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ---------------------- DISTRICT: RESEARCH LAB ----------------------
+function DistrictResearch() {
+  return (
+    <div className="grid md:grid-cols-2 gap-5">
+      {RESEARCH.map((r, i) => {
+        const Icon = r.icon
+        return (
+          <motion.div
+            key={r.title}
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.12 }}
+            className="glass-dark clip-notch p-6 relative overflow-hidden group"
+          >
+            {/* animated bg */}
+            <div className={`absolute inset-0 opacity-20 bg-gradient-to-br ${r.color}`} />
+            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full opacity-20 blur-3xl bg-gradient-to-br from-cyan-400 to-fuchsia-500" />
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`w-11 h-11 clip-hex flex items-center justify-center bg-gradient-to-br ${r.color} border-2 border-white/20`}>
+                  <Icon className="w-5 h-5 text-white drop-shadow" />
+                </div>
+                <div>
+                  <div className="font-mono text-[10px] text-cyan-300/80">{r.tag}</div>
+                  <h4 className="font-display font-bold text-xl text-cyan-100">{r.title}</h4>
+                </div>
+              </div>
+              <p className="font-body text-cyan-50/90 leading-relaxed">{r.story}</p>
+
+              {/* Demo readout */}
+              <div className="mt-4 border border-cyan-400/25 bg-black/40 clip-notch-sm p-3 font-mono text-[10px] text-cyan-300/90 relative overflow-hidden">
+                <div className="flex items-center gap-2 text-fuchsia-300/70 mb-1">
+                  <Play className="w-3 h-3" /> LIVE DEMO
+                </div>
+                <div className="whitespace-pre-wrap break-words">{r.demo}</div>
+                <motion.div
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
+                  className="absolute inset-y-0 w-24"
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(0,240,255,0.15), transparent)' }}
+                />
+              </div>
+            </div>
+          </motion.div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ---------------------- DISTRICT: ACHIEVEMENTS ----------------------
+function DistrictAchievements() {
+  return (
+    <div>
+      <div className="text-center mb-6">
+        <div className="font-mono text-[10px] text-orange-300/80">// LEGACY ARCHIVE // 07 TROPHIES DECRYPTED //</div>
+      </div>
+
+      <div className="relative">
+        {/* Tower silhouette */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-orange-400 via-cyan-400 to-fuchsia-500 opacity-40" />
+        <div className="space-y-4">
+          {ACHIEVEMENTS.map((a, i) => (
+            <motion.div
+              key={a.title}
+              initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`relative flex items-center gap-4 ${i % 2 === 0 ? 'justify-start' : 'justify-end'} md:pr-0`}
+            >
+              {i % 2 !== 0 && <div className="hidden md:block flex-1" />}
+              <div className="glass-dark clip-notch p-4 flex items-center gap-4 max-w-md w-full md:w-1/2 relative">
+                <div className="w-14 h-14 clip-hex bg-gradient-to-br from-orange-500 to-fuchsia-500 flex items-center justify-center flex-shrink-0"
+                  style={{ boxShadow: '0 0 20px rgba(255,138,26,0.5)' }}>
+                  <Trophy className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-mono text-[9px] text-orange-300/80">FLOOR {String(i + 1).padStart(2, '0')} • {a.tag}</div>
+                  <h4 className="font-display font-bold text-lg text-cyan-100">{a.title}</h4>
+                  <div className="font-body text-sm text-cyan-100/80">{a.sub}</div>
+                </div>
+              </div>
+              {i % 2 === 0 && <div className="hidden md:block flex-1" />}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------- DISTRICT: MISSION CONTROL (CONTACT) ----------------------
+function DistrictContact() {
+  const links = [
+    { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/rummankhan/', color: '#0077b5', tag: 'PROFESSIONAL' },
+    { icon: Github, label: 'GitHub', href: 'https://github.com/rummankhan', color: '#8a2be2', tag: 'CODE' },
+    { icon: Mail, label: 'Direct Uplink', href: 'mailto:hello@rumman.dev', color: '#00f0ff', tag: 'MESSAGE' },
+    { icon: Calendar, label: 'Schedule Meeting', href: 'https://calendly.com/rumman', color: '#ff2bd6', tag: 'BRIEFING' },
+    { icon: Download, label: 'Download Resume', href: '/resume.pdf', color: '#ff8a1a', tag: 'DOSSIER' },
+  ]
+
+  return (
+    <div className="grid lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 glass-dark clip-notch p-6 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30" style={{
+          background: 'radial-gradient(ellipse at 50% 30%, rgba(0,240,255,0.25), transparent 60%)'
+        }} />
+        <div className="relative">
+          <div className="font-mono text-[10px] text-cyan-400/80">// UPLINK TERMINAL // OVERLOOKING CITY //</div>
+          <h3 className="font-display font-black text-3xl neon-text mt-2 glitch" data-text="MISSION CONTROL">MISSION CONTROL</h3>
+          <p className="font-body text-cyan-100/80 mt-2 max-w-lg">
+            Signals are open. Whether it&apos;s a role, a research collaboration, or a wild product idea — patch through on any channel below.
+          </p>
+
+          <div className="mt-6 grid sm:grid-cols-2 gap-3">
+            {links.map((l, i) => {
+              const Icon = l.icon
+              return (
+                <motion.a
+                  key={l.label}
+                  href={l.href}
+                  target="_blank" rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08 }}
+                  className="glass px-4 py-3 clip-notch flex items-center gap-3 group hover:bg-cyan-500/10 transition"
+                  style={{ borderColor: `${l.color}66` }}
+                >
+                  <div className="w-10 h-10 clip-hex flex items-center justify-center flex-shrink-0"
+                    style={{ background: `${l.color}22`, boxShadow: `0 0 12px ${l.color}55`, border: `1px solid ${l.color}` }}>
+                    <Icon className="w-4 h-4" style={{ color: l.color }} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-mono text-[9px] text-cyan-400/70">{l.tag}</div>
+                    <div className="font-display font-bold text-sm text-cyan-100">{l.label}</div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-cyan-300 group-hover:translate-x-1 transition" />
+                </motion.a>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Overlooking city view */}
+      <div className="glass-dark clip-notch p-4 relative overflow-hidden min-h-[300px]">
+        <div className="font-mono text-[10px] text-cyan-400/80 mb-2">// CITY OVERWATCH //</div>
+        <div className="relative w-full h-full min-h-[240px] rounded overflow-hidden border border-cyan-400/30 bg-gradient-to-b from-[#0a0d18] to-[#1a0f2a]">
+          <svg viewBox="0 0 400 200" className="absolute bottom-0 w-full h-full" preserveAspectRatio="none">
+            {Array.from({ length: 20 }).map((_, i) => {
+              const w = 12 + (i * 13) % 20
+              const h = 30 + (i * 23) % 80
+              return (
+                <g key={i}>
+                  <rect x={i * 21} y={200 - h} width={w} height={h} fill="#05070c" stroke="#00f0ff" strokeOpacity="0.3" />
+                  {Array.from({ length: Math.floor(h / 6) }).map((_, j) => (
+                    <rect key={j} x={i * 21 + 2} y={200 - h + 3 + j * 6} width={w - 4} height={2}
+                      fill={(i + j) % 4 === 0 ? '#ff2bd6' : '#00f0ff'} opacity={0.6} />
+                  ))}
+                </g>
+              )
+            })}
+          </svg>
+          <motion.div
+            animate={{ x: [-10, 400] }} transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+            className="absolute top-6"
+          >
+            <div className="w-4 h-[1.5px] bg-cyan-400 shadow-[0_0_8px_#0ff]" />
+          </motion.div>
+          <div className="absolute inset-0 pointer-events-none scanlines" />
+        </div>
+        <div className="mt-2 font-mono text-[9px] text-cyan-400/60 flex justify-between">
+          <span>LAT: 45.0451° N</span><span>LON: 128.0912° E</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------- MAIN APP ----------------------
+function App() {
+  const [phase, setPhase] = useState('boot') // boot -> city
+  const [activeDistrict, setActiveDistrict] = useState(null)
+  const [timeStr, setTimeStr] = useState('00:00:00')
+
+  useEffect(() => {
+    const tick = () => {
+      const d = new Date()
+      setTimeStr(`${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`)
+    }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  const handleFinishBoot = useCallback(() => setPhase('city'), [])
+  const handleEnter = useCallback((d) => setActiveDistrict(d.key), [])
+  const handleExit = useCallback(() => setActiveDistrict(null), [])
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape' && activeDistrict) setActiveDistrict(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [activeDistrict])
+
+  const districtObj = DISTRICTS.find(d => d.key === activeDistrict)
+
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden bg-black">
+      <AnimatePresence mode="wait">
+        {phase === 'boot' && <BootSequence key="b" onFinish={handleFinishBoot} />}
+      </AnimatePresence>
+
+      {phase === 'city' && (
+        <>
+          <CityView onEnter={handleEnter} />
+          <HUD current={activeDistrict} onExit={handleExit} timeStr={timeStr} />
+
+          <AnimatePresence mode="wait">
+            {districtObj && (
+              <DistrictPanel district={districtObj} onClose={handleExit}>
+                {activeDistrict === 'identity' && <DistrictIdentity />}
+                {activeDistrict === 'education' && <DistrictEducation />}
+                {activeDistrict === 'corporate' && <DistrictCorporate />}
+                {activeDistrict === 'data' && <DistrictData />}
+                {activeDistrict === 'research' && <DistrictResearch />}
+                {activeDistrict === 'achievements' && <DistrictAchievements />}
+                {activeDistrict === 'contact' && <DistrictContact />}
+              </DistrictPanel>
+            )}
+          </AnimatePresence>
+        </>
+      )}
+    </div>
+  )
+}
+
+export default App

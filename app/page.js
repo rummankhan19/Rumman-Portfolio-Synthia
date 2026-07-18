@@ -1424,56 +1424,140 @@ function DistrictPanel({ district, children, onClose }) {
 function DistrictIdentity() {
   return (
     <div className="grid lg:grid-cols-5 gap-6">
-      {/* Massive AI core */}
-      <div className="lg:col-span-2 relative glass-dark clip-notch p-8 min-h-[520px] flex flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 opacity-40" style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(0,240,255,0.2), transparent 60%)'
+      {/* Massive AI core with hologram projection of Rumman */}
+      <div className="lg:col-span-2 relative glass-dark clip-notch p-6 min-h-[560px] flex flex-col items-center justify-center overflow-hidden">
+        {/* backdrop glow */}
+        <div className="absolute inset-0 opacity-60" style={{
+          background: 'radial-gradient(circle at 50% 45%, rgba(0,240,255,0.25), transparent 60%), radial-gradient(circle at 50% 100%, rgba(181,55,242,0.35), transparent 60%)'
         }} />
-        {/* Rotating rings */}
+        <div className="absolute inset-0 cyber-grid-sm opacity-25" />
+
+        {/* Rotating rings behind hologram */}
         <motion.div
-          animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          className="absolute w-[340px] h-[340px] rounded-full border border-cyan-400/40"
+          animate={{ rotate: 360 }} transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-[360px] h-[360px] rounded-full border border-cyan-400/40"
           style={{ boxShadow: 'inset 0 0 40px rgba(0,240,255,0.3)' }}
         />
         <motion.div
-          animate={{ rotate: -360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-          className="absolute w-[280px] h-[280px] rounded-full border border-fuchsia-400/40 border-dashed"
+          animate={{ rotate: -360 }} transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-[300px] h-[300px] rounded-full border border-fuchsia-400/40 border-dashed"
         />
         <motion.div
-          animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-          className="absolute w-[200px] h-[200px] rounded-full border-2 border-cyan-300/60"
+          animate={{ rotate: 360 }} transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-[220px] h-[220px] rounded-full border-2 border-cyan-300/60"
         />
-        {/* Core orb */}
-        <motion.div
-          animate={{ scale: [1, 1.06, 1] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative w-32 h-32 rounded-full flex items-center justify-center"
-          style={{
-            background: 'radial-gradient(circle at 30% 30%, #b537f2, #00f0ff 55%, #05070c 90%)',
-            boxShadow: '0 0 40px rgba(0,240,255,0.8), 0 0 90px rgba(181,55,242,0.6)'
-          }}
-        >
-          <div className="absolute inset-0 rounded-full mix-blend-overlay" style={{
-            background: 'conic-gradient(from 0deg, transparent, rgba(255,255,255,0.4), transparent 30%)'
-          }} />
-          <Cpu className="w-10 h-10 text-white relative z-10 drop-shadow-[0_0_10px_#0ff]" />
-        </motion.div>
 
-        {/* corner readouts */}
-        <div className="absolute top-4 left-4 font-mono text-[9px] text-cyan-300/80">
-          <div>NEURAL CORE</div>
-          <div>UPTIME: 24y 08m</div>
-        </div>
-        <div className="absolute top-4 right-4 font-mono text-[9px] text-fuchsia-300/80 text-right">
-          <div>STATUS: ACTIVE</div>
-          <div className="flex items-center gap-1 justify-end">
-            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-neon" />
-            SYNCED
+        {/* HOLOGRAM projection of Rumman */}
+        <div className="relative z-10 w-full flex justify-center items-end" style={{ height: 460 }}>
+          {/* projection platform disk */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[240px] h-6 rounded-full"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(0,240,255,0.6), rgba(181,55,242,0.3), transparent 70%)',
+              filter: 'blur(4px)',
+            }} />
+          <div className="absolute bottom-9 left-1/2 -translate-x-1/2 w-[200px] h-[2px] rounded-full"
+            style={{ background: 'linear-gradient(90deg, transparent, #00f0ff, #b537f2, transparent)', boxShadow: '0 0 12px #00f0ff' }} />
+
+          {/* Light beam from platform up */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[220px] h-[380px] pointer-events-none"
+            style={{
+              background: 'linear-gradient(180deg, rgba(0,240,255,0.0) 0%, rgba(0,240,255,0.12) 40%, rgba(0,240,255,0.22) 90%)',
+              clipPath: 'polygon(20% 100%, 80% 100%, 60% 0%, 40% 0%)',
+              filter: 'blur(4px)',
+            }} />
+
+          {/* The photo itself with hologram treatment */}
+          <motion.div
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 4, ease: 'easeInOut', repeat: Infinity }}
+            className="relative"
+            style={{ width: 260, height: 420 }}
+          >
+            {/* photo layer 1: base cyan-tinted hologram */}
+            <motion.img
+              src="/rumman.png"
+              alt="Rumman Khan hologram"
+              className="absolute inset-0 w-full h-full object-contain"
+              style={{
+                filter: 'brightness(1.05) contrast(1.15) saturate(0.5) hue-rotate(150deg) drop-shadow(0 0 14px rgba(0,240,255,0.9)) drop-shadow(0 0 42px rgba(0,240,255,0.45))',
+              }}
+              animate={{ opacity: [0.95, 0.82, 0.98, 0.88, 0.95] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            {/* photo layer 2: magenta chromatic aberration ghost */}
+            <img
+              src="/rumman.png"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+              style={{
+                mixBlendMode: 'screen',
+                filter: 'brightness(1.1) saturate(0.6) hue-rotate(280deg) drop-shadow(0 0 8px rgba(255,43,214,0.7))',
+                transform: 'translateX(3px)',
+                opacity: 0.55,
+              }}
+            />
+            {/* photo layer 3: cyan chromatic aberration ghost */}
+            <img
+              src="/rumman.png"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+              style={{
+                mixBlendMode: 'screen',
+                filter: 'brightness(1.1) saturate(0.6) hue-rotate(180deg) drop-shadow(0 0 8px rgba(0,240,255,0.7))',
+                transform: 'translateX(-3px)',
+                opacity: 0.55,
+              }}
+            />
+
+            {/* Scanlines OVER the figure */}
+            <div className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(0,240,255,0.18) 4px, transparent 5px)',
+                mixBlendMode: 'overlay',
+              }} />
+
+            {/* Sweeping scan bar */}
+            <motion.div
+              className="absolute inset-x-0 h-16 pointer-events-none"
+              style={{
+                background: 'linear-gradient(180deg, transparent 0%, rgba(0,240,255,0.4) 50%, transparent 100%)',
+                mixBlendMode: 'screen',
+                filter: 'blur(3px)',
+              }}
+              animate={{ y: ['-10%', '110%'] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+            />
+
+            {/* Occasional glitch band */}
+            <motion.div
+              className="absolute inset-x-0 h-2 pointer-events-none"
+              style={{
+                background: 'linear-gradient(90deg, transparent, rgba(255,43,214,0.75), transparent)',
+                mixBlendMode: 'screen',
+              }}
+              animate={{ y: ['30%', '30%', '55%', '55%', '30%'], opacity: [0, 0, 0.8, 0, 0] }}
+              transition={{ duration: 6, repeat: Infinity, times: [0, 0.45, 0.5, 0.55, 1] }}
+            />
+          </motion.div>
+
+          {/* Data callouts around figure */}
+          <div className="absolute top-4 left-2 font-mono text-[9px] text-cyan-300/80 space-y-0.5 hidden sm:block">
+            <div>ID#: RK-01</div>
+            <div>SCAN: STABLE</div>
+            <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-neon" />LIVE-PROJ</div>
+          </div>
+          <div className="absolute top-4 right-2 font-mono text-[9px] text-fuchsia-300/80 space-y-0.5 text-right hidden sm:block">
+            <div>H: 178cm</div>
+            <div>MOOD: focused</div>
+            <div>VOICE: matched</div>
           </div>
         </div>
-        <div className="absolute bottom-4 left-4 right-4 font-mono text-[9px] text-cyan-400/60 flex justify-between">
-          <span>CLK: 4.6 GHz</span>
-          <span>MEM: ∞</span>
+
+        <div className="absolute bottom-3 left-4 right-4 flex justify-between font-mono text-[9px] text-cyan-400/60 z-20">
+          <span>PROJECTOR-07</span>
+          <span>NEURAL CORE ONLINE</span>
           <span>THR: 128</span>
         </div>
       </div>
